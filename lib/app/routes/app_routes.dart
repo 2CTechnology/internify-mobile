@@ -26,6 +26,7 @@ abstract class Routes {
   static const MY_PROFILE = _Paths.MY_PROFILE;
   static const MY_TEAM = _Paths.MY_TEAM;
   static const MEMBER_TEAM = _Paths.MEMBER_TEAM;
+  static const COUNSELING = _Paths.COUNSELING;
 }
 
 abstract class _Paths {
@@ -51,4 +52,5 @@ abstract class _Paths {
   static const MY_PROFILE = '/my-profile';
   static const MY_TEAM = '/my-team';
   static const MEMBER_TEAM = '/member-team';
+  static const COUNSELING = '/counseling';
 }

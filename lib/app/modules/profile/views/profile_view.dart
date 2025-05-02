@@ -172,6 +172,13 @@ class _ProfileViewState extends State<ProfileView> {
             );
           }),
           ButtonProfile(
+            btnIcon: CupertinoIcons.calendar_circle_fill,
+            btnText: "Counseling",
+            iconColor: Color.fromARGB(255, 70, 116, 222),
+            textColor: Color.fromARGB(255, 49, 46, 58),
+            onPressed: () => Get.toNamed(Routes.COUNSELING),
+          ),
+          ButtonProfile(
             btnIcon: CupertinoIcons.info_circle_fill,
             btnText: "About",
             iconColor: Color.fromARGB(255, 70, 116, 222),
