@@ -6,7 +6,7 @@ class TimelineBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<TimelineController>(
-      () => TimelineController(),
+      () => TimelineController()..fetchTimelineData(),
     );
   }
 }

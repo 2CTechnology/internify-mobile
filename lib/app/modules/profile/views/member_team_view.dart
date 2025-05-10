@@ -74,6 +74,7 @@ class _MemberTeamViewState extends State<MemberTeamView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         centerTitle: true,
         leading: IconButton(
           onPressed: () {

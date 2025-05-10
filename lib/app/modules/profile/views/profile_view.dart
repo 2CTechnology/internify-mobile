@@ -118,130 +118,133 @@ class _ProfileViewState extends State<ProfileView> {
         }),
       ),
       backgroundColor: Color.fromARGB(255, 249, 249, 249),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 34,
-          ),
-          ButtonProfile(
-            btnIcon: CupertinoIcons.person_fill,
-            btnText: "My Profile",
-            iconColor: Color.fromARGB(255, 70, 116, 222),
-            textColor: Color.fromARGB(255, 49, 46, 58),
-            onPressed: () => Get.toNamed(Routes.MY_PROFILE),
-          ),
-          Consumer<ProfileController>(builder: (context, check, child) {
-            return ButtonProfile(
-              btnIcon: CupertinoIcons.group_solid,
-              btnText: "My Team Profile",
+      body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 34,
+            ),
+            ButtonProfile(
+              btnIcon: CupertinoIcons.person_fill,
+              btnText: "My Profile",
               iconColor: Color.fromARGB(255, 70, 116, 222),
               textColor: Color.fromARGB(255, 49, 46, 58),
-              onPressed: () async {
-                var data = await check.getDataKelompok(id: id, token: token);
-
-                if (data != null && data['anggota'] != null) {
-                  Get.to(
-                    () => MemberTeamView(
-                      memberCount: data['anggota'].length,
-                      initialMembersData: List<MemberData>.from(
-                        data['anggota'].map((member) => MemberData(
-                              fullname: member['nama'] ?? '',
-                              nim: member['nim'] ?? '',
-                              prodiId: member['id_prodi'] ?? '',
-                              angkatan: member['angkatan'] ?? '',
-                              golongan: member['golongan'] ?? '',
-                              dateOfBirth: member['tanggal_lahir'] != null
-                                  ? DateTime.parse(member['tanggal_lahir'])
-                                  : null,
-                              gender: member['jenis_kelamin'][0].toUpperCase() +
-                                      member['jenis_kelamin']
-                                          .substring(1)
-                                          .toLowerCase() ??
-                                  '',
-                              phoneNumber: member['no_telp'] ?? '',
-                              email: member['email'] ?? '',
-                            )),
-                      ),
-                    ),
-                  );
-                } else {
-                  Get.toNamed(Routes.MY_TEAM);
-                }
-              },
-            );
-          }),
-          ButtonProfile(
-            btnIcon: CupertinoIcons.calendar_circle_fill,
-            btnText: "Counseling",
-            iconColor: Color.fromARGB(255, 70, 116, 222),
-            textColor: Color.fromARGB(255, 49, 46, 58),
-            onPressed: () => Get.toNamed(Routes.COUNSELING),
-          ),
-          ButtonProfile(
-            btnIcon: CupertinoIcons.info_circle_fill,
-            btnText: "About",
-            iconColor: Color.fromARGB(255, 70, 116, 222),
-            textColor: Color.fromARGB(255, 49, 46, 58),
-            onPressed: () => Get.toNamed(Routes.ABOUT_PROFILE),
-          ),
-          ButtonProfile(
-            btnIcon: CupertinoIcons.square_arrow_left,
-            btnText: "Logout",
-            iconColor: Colors.red,
-            textColor: Colors.red,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Logout"),
-                    content: Text("Are you sure you want to logout?"),
-                    backgroundColor: Colors.white,
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                              color: Color.fromARGB(255, 70, 116, 222),
-                            ),
-                          ),
+              onPressed: () => Get.toNamed(Routes.MY_PROFILE),
+            ),
+            Consumer<ProfileController>(builder: (context, check, child) {
+              return ButtonProfile(
+                btnIcon: CupertinoIcons.group_solid,
+                btnText: "My Team Profile",
+                iconColor: Color.fromARGB(255, 70, 116, 222),
+                textColor: Color.fromARGB(255, 49, 46, 58),
+                onPressed: () async {
+                  var data = await check.getDataKelompok(id: id, token: token);
+        
+                  if (data != null && data['anggota'] != null) {
+                    Get.to(
+                      () => MemberTeamView(
+                        memberCount: data['anggota'].length,
+                        initialMembersData: List<MemberData>.from(
+                          data['anggota'].map((member) => MemberData(
+                                fullname: member['nama'] ?? '',
+                                nim: member['nim'] ?? '',
+                                prodiId: member['id_prodi'] ?? '',
+                                angkatan: member['angkatan'] ?? '',
+                                golongan: member['golongan'] ?? '',
+                                dateOfBirth: member['tanggal_lahir'] != null
+                                    ? DateTime.parse(member['tanggal_lahir'])
+                                    : null,
+                                gender: member['jenis_kelamin'][0].toUpperCase() +
+                                        member['jenis_kelamin']
+                                            .substring(1)
+                                            .toLowerCase() ??
+                                    '',
+                                phoneNumber: member['no_telp'] ?? '',
+                                email: member['email'] ?? '',
+                              )),
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          // Reset the index
-                          final navigationController =
-                              Get.find<NavigationBarController>();
-                          navigationController.resetToHomePage();
-
-                          DatabaseProvider().logout();
-
-                          Get.offAllNamed(Routes.LOGIN);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(Colors.red),
-                        ),
-                        child: Text(
-                          "Logout",
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
+                    );
+                  } else {
+                    Get.toNamed(Routes.MY_TEAM);
+                  }
                 },
               );
-            },
-          ),
-        ],
+            }),
+            ButtonProfile(
+              btnIcon: CupertinoIcons.calendar_circle_fill,
+              btnText: "Counseling",
+              iconColor: Color.fromARGB(255, 70, 116, 222),
+              textColor: Color.fromARGB(255, 49, 46, 58),
+              onPressed: () => Get.toNamed(Routes.COUNSELING),
+            ),
+            ButtonProfile(
+              btnIcon: CupertinoIcons.info_circle_fill,
+              btnText: "About",
+              iconColor: Color.fromARGB(255, 70, 116, 222),
+              textColor: Color.fromARGB(255, 49, 46, 58),
+              onPressed: () => Get.toNamed(Routes.ABOUT_PROFILE),
+            ),
+            ButtonProfile(
+              btnIcon: CupertinoIcons.square_arrow_left,
+              btnText: "Logout",
+              iconColor: Colors.red,
+              textColor: Colors.red,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Logout"),
+                      content: Text("Are you sure you want to logout?"),
+                      backgroundColor: Colors.white,
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            "Cancel",
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                color: Color.fromARGB(255, 70, 116, 222),
+                              ),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // Reset the index
+                            final navigationController =
+                                Get.find<NavigationBarController>();
+                            navigationController.resetToHomePage();
+        
+                            DatabaseProvider().logout();
+        
+                            Get.offAllNamed(Routes.LOGIN);
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll(Colors.red),
+                          ),
+                          child: Text(
+                            "Logout",
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

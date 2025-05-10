@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:get/get.dart';
+import 'package:simag_app/app/modules/profile/views/member_team_view.dart';
 import 'package:simag_app/app/modules/timeline/controllers/fetch_jobs_controller.dart';
 
 import '../controllers/timeline_controller.dart';
@@ -12,9 +13,9 @@ class TimelineView extends GetView<TimelineController> {
   const TimelineView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    FetchAlurMagangController fetchAlurMagangController =
-        Get.put(FetchAlurMagangController());
-    fetchAlurMagangController.fetchAlurMagang();
+    // FetchAlurMagangController fetchAlurMagangController =
+    //     Get.put(FetchAlurMagangController());
+    // fetchAlurMagangController.fetchAlurMagang();
     // print(timelineController.alurMagangModel.value.data.dataAlurMagang.id);
     return Scaffold(
       appBar: AppBar(
@@ -34,54 +35,73 @@ class TimelineView extends GetView<TimelineController> {
       ),
       body: Obx(
         () {
-          if (fetchAlurMagangController.isLoading.value) {
+          if (controller.fetchAlurMagangController.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
-          } else if (fetchAlurMagangController.alurMagangModel.value.data ==
+          } else if (controller
+                  .fetchAlurMagangController.alurMagangModel.value.data ==
               null)
             return const Text("Data not found");
           else {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ProgressTrack(
-                    data: fetchAlurMagangController
-                        .alurMagangModel.value.data.dataAlurMagang?.idKelompok,
-                    title: "Team",
-                    descriptionNull:
-                        "Please fill in your team by tapping on this box",
-                    descriptionNotNull: "Team is already filled in",
-                    pageName: "my-team",
-                  ),
-                  ProgressTrack(
-                    title: "Internship Proposal",
-                    data: fetchAlurMagangController.alurMagangModel.value.data
-                        .dataAlurMagang?.statusProposal,
-                    descriptionNull: "Please complete the proposal",
-                    descriptionNotNull: "",
-                    pageName: "apply-jobs",
-                  ),
-                  ProgressTrack(
-                      data: fetchAlurMagangController.alurMagangModel.value.data
-                          .dataAlurMagang?.suratBalasan,
-                      title: "Reply Letter",
+            return RefreshIndicator(
+              onRefresh: () async {
+                await controller.fetchTimelineData();
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ProgressTrack(
+                      // data: fetchAlurMagangController
+                      //     .alurMagangModel.value.data.dataAlurMagang?.idKelompok,
+                      data: controller.anggotaList.isNotEmpty ? 1 : 0,
+                      title: "Team",
                       descriptionNull:
-                          "Please upload the reply letter if you have it",
+                          "Please fill in your team by tapping on this box",
+                      descriptionNotNull: "Team is already filled in",
+                      pageName: "my-team",
+                    ),
+                    ProgressTrack(
+                      title: "Internship Proposal",
+                      data: controller.fetchAlurMagangController.alurMagangModel
+                          .value.data.dataAlurMagang?.statusProposal,
+                      descriptionNull: "Please complete the proposal",
+                      descriptionNotNull: "",
+                      pageName: "apply-jobs",
+                    ),
+                    ProgressTrack(
+                        data: controller
+                            .fetchAlurMagangController
+                            .alurMagangModel
+                            .value
+                            .data
+                            .dataAlurMagang
+                            ?.suratBalasan,
+                        title: "Reply Letter",
+                        descriptionNull:
+                            "Please upload the reply letter if you have it",
+                        descriptionNotNull:
+                            "Reply letter has been uploaded, waiting for the letter of acceptance",
+                        pageName: "surat-balasan",
+                        dataStatus: controller
+                            .fetchAlurMagangController
+                            .alurMagangModel
+                            .value
+                            .data
+                            .dataAlurMagang
+                            ?.statusProposal),
+                    ProgressTrack(
+                      data: controller.fetchAlurMagangController.alurMagangModel
+                          .value.data.dataAlurMagang?.suratPengantar,
+                      title: "Letter of Assignment",
+                      descriptionNull:
+                          "Letter of acceptance is being processed",
                       descriptionNotNull:
-                          "Reply letter has been uploaded, waiting for the letter of acceptance",
-                      pageName: "surat-balasan",
-                      dataStatus: fetchAlurMagangController.alurMagangModel
-                          .value.data.dataAlurMagang?.statusProposal),
-                  ProgressTrack(
-                    data: fetchAlurMagangController.alurMagangModel.value.data
-                        .dataAlurMagang?.suratPengantar,
-                    title: "Letter of Acceptance",
-                    descriptionNull: "Letter of acceptance is being processed",
-                    descriptionNotNull:
-                        "Please download the internship acceptance letter",
-                    pageName: "download-surat-pengantar",
-                  ),
-                ],
+                          "Please download the internship acceptance letter",
+                      pageName: "download-surat-pelaksanaan",
+                    ),
+                  ],
+                ),
               ),
             );
           }
@@ -98,6 +118,7 @@ class ProgressTrack extends StatelessWidget {
   final dynamic data;
   final String pageName;
   final dynamic dataStatus;
+  static bool isSnackbarActive = false;
 
   const ProgressTrack({
     Key? key,
@@ -109,10 +130,31 @@ class ProgressTrack extends StatelessWidget {
     this.dataStatus,
   }) : super(key: key);
 
+  void showSingleSnackbar(String title, String message, Color backgroundColor) {
+    if (!isSnackbarActive) {
+      isSnackbarActive = true;
+      Get.snackbar(
+        title,
+        message,
+        animationDuration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 1650),
+        backgroundColor: backgroundColor,
+        colorText: Colors.white,
+        borderWidth: 5.0,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(20.0),
+        icon: const Icon(CupertinoIcons.info_circle),
+      );
+      Future.delayed(const Duration(milliseconds: 1800), () {
+        isSnackbarActive = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     FetchAlurMagangController fetchAlurMagangController = Get.find();
-    TimelineController controller = Get.put(TimelineController());
+    TimelineController controller = Get.find<TimelineController>();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -140,33 +182,59 @@ class ProgressTrack extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          if (data == null && pageName != "my-team") {
-            if (dataStatus == "diterima" && pageName == "surat-balasan") {
-              Get.toNamed(pageName);
+          if (pageName == "my-team") {
+            if (controller.anggotaList.isNotEmpty) {
+              // kalau sudah ada anggota
+              // Get.to(() => MemberTeamView(
+              //       memberCount: controller.anggotaList.length,
+              //       initialMembersData: controller.anggotaList
+              //           .map((e) => MemberData(
+              //                 fullname: e.nama,
+              //                 nim: e.nim,
+              //                 prodiId: e.idProdi,
+              //                 angkatan: e.angkatan,
+              //                 golongan: e.golongan,
+              //                 dateOfBirth:
+              //                     e.createdAt, // atau dari date lahir kalau ada
+              //                 gender: 'Male', // Default dulu atau mapping lagi
+              //                 phoneNumber: '',
+              //                 email: '',
+              //               ))
+              //           .toList(),
+              //     ));
+              showSingleSnackbar("Info", "Go to profile page to see your team", Color.fromARGB(255, 70, 116, 222));
             } else {
-              Get.snackbar("Error", "Please complete previous steps",
-                  animationDuration: const Duration(milliseconds: 300),
-                  duration: const Duration(milliseconds: 1650),
-                  backgroundColor: Colors.red,
-                  colorText: Colors.white,
-                  borderWidth: 5.0,
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(20.0),
-                  icon: const Icon(CupertinoIcons.info_circle));
+              showSingleSnackbar("Error", "Please fill in your team details in profile", Colors.red);
             }
-          } else if (data != null && pageName == "my-team") {
-            Get.snackbar("Info", "Go to profile pages to see your team",
-                animationDuration: const Duration(milliseconds: 300),
-                duration: const Duration(milliseconds: 1650),
-                backgroundColor: Color.fromARGB(255, 70, 116, 222),
-                colorText: Colors.white,
-                borderWidth: 5.0,
-                snackPosition: SnackPosition.BOTTOM,
-                margin: const EdgeInsets.all(20.0),
-                icon: const Icon(CupertinoIcons.info_circle));
           } else if (pageName == "download-surat-pengantar") {
             controller.downloadFile();
           } else {
+            final hasTeam = controller.anggotaList.isNotEmpty;
+            final proposal = controller.fetchAlurMagangController
+                .alurMagangModel.value.data.dataAlurMagang?.proposal;
+            final replyLetter = controller.fetchAlurMagangController
+                .alurMagangModel.value.data.dataAlurMagang?.suratBalasan;
+
+            if (!hasTeam &&
+                (pageName == "apply-jobs" ||
+                    pageName == "surat-balasan" ||
+                    pageName == "download-surat-pengantar")) {
+              showSingleSnackbar("Error", "Please complete previous steps", Colors.red);
+              return;
+            }
+
+            if ((proposal == null || proposal == '') &&
+                (pageName == "surat-balasan" ||
+                    pageName == "download-surat-pengantar")) {
+              showSingleSnackbar("Error", "Please complete previous steps", Colors.red);
+              return;
+            }
+
+            if ((replyLetter == null || replyLetter == '') &&
+                pageName == "download-surat-pelaksanaan") {
+              showSingleSnackbar("Error", "Please complete previous steps", Colors.red);
+              return;
+            }
             Get.toNamed(pageName);
           }
         },

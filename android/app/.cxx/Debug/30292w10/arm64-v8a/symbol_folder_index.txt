@@ -1,0 +1,1 @@
+C:\project\internify-mobile\build\app\intermediates\cxx\Debug\30292w10\obj\arm64-v8a

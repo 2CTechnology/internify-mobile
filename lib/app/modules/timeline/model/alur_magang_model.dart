@@ -21,8 +21,10 @@ class AlurMagangModel {
 
   factory AlurMagangModel.fromJson(Map<String, dynamic> json) =>
       AlurMagangModel(
-        message: json["message"],
-        data: Data.fromJson(json["data"]),
+        message: json["message"] ?? '',
+        data: json ["data"] != null
+          ? Data.fromJson(json["data"])
+          : Data(message: '', dataAlurMagang: null),
       );
 
   Map<String, dynamic> toJson() => {
@@ -98,8 +100,8 @@ class DataAlurMagang {
         suratBalasan: json["surat_balasan"],
         suratPengantar: json["surat_pengantar"],
         status: json["status"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        createdAt: DateTime.tryParse(json["created_at"] ?? '') ?? DateTime.now(),
+        updatedAt: DateTime.tryParse(json["updated_at"] ?? '') ?? DateTime.now(),
         idTempatMagang: json["id_tempat_magang"],
       );
 

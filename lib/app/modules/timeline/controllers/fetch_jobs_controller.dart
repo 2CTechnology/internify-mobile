@@ -46,9 +46,34 @@ class FetchKelompokController extends GetxController {
     );
 
     if (response.statusCode == 200) {
-      kelompokModel.value = kelompokModelFromJson(response.body);
+      try {
+        final result = jsonDecode(response.body);
+        // handle jika response kosong/null
+        if (result['response'] == null) {
+          kelompokModel.value = KelompokModel(
+            message: result['message'] ?? '',
+            response: DataKelompok(
+              id: 0,
+              namaKelompok: '',
+              idUsers: 0,
+              idDospem: null,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+              namaDosen: '',
+              anggota: [],
+            ),
+          );
+        } else {
+          kelompokModel.value = kelompokModelFromJson(response.body);
+        }
+      } catch (e) {
+        print("JSON parse error: $e");
+        rethrow;
+      }
     } else {
-      throw Exception('Failed to load kelompok');
+      print('Gagal ambil kelompok, status: ${response.statusCode}');
+      print('Body: ${response.body}');
+      // bisa ditangani pakai Get.snackbar atau tidak usah throw agar tidak crash
     }
   }
 }
@@ -131,6 +156,13 @@ class FetchAlurMagangController extends GetxController {
     final requestBaseUrl = AppUrl.baseUrl;
     final dbProvider = Get.put(DatabaseProvider());
     final token = await dbProvider.getToken();
+
+    if (token == null || token.isEmpty) {
+      print("[fetchAlurMagang] Token not found. Skipping API call.");
+      isLoading.value = false;
+      return;
+    }
+
     final url = Uri.parse('$requestBaseUrl/get-alur-magang');
 
     final response = await http.get(
@@ -146,7 +178,13 @@ class FetchAlurMagangController extends GetxController {
       print(url);
       print(response.body);
     } else {
-      throw Exception('Failed to load alur magang');
+      print("Gagal ambil alur magang, status: ${response.statusCode}");
+      print("Body: ${response.body}");
+      alurMagangModel.value = AlurMagangModel(
+        message: "Empty",
+        data: Data(message: "Empty", dataAlurMagang: null),
+      );
+      return;
     }
     isLoading.value = false;
   }

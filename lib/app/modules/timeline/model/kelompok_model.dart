@@ -105,8 +105,8 @@ class Anggota {
         idProdi: json["id_prodi"],
         angkatan: json["angkatan"],
         golongan: json["golongan"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        createdAt: DateTime.tryParse(json["created_at"] ?? '') ?? DateTime.now(),
+        updatedAt: DateTime.tryParse(json["updated_at"] ?? '') ?? DateTime.now(),
       );
 
   Map<String, dynamic> toJson() => {

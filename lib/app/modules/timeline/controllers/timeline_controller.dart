@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_overrides
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -14,6 +15,17 @@ import 'package:simag_app/app/modules/timeline/controllers/post_jobs_controller.
 class TimelineController extends GetxController {
   var selectedFile = Rxn<PlatformFile>();
   final PostJobsController controller = PostJobsController();
+
+  // Di TimelineController atau FetchAlurMagangController
+  final FetchKelompokController fetchKelompokController = Get.put(FetchKelompokController());
+  final FetchAlurMagangController fetchAlurMagangController = Get.put(FetchAlurMagangController());
+  var anggotaList = [].obs;
+
+  Future<void> fetchTimelineData() async {
+    await fetchKelompokController.fetchKelompok();
+    anggotaList.value = fetchKelompokController.kelompokModel.value.response.anggota;
+    await fetchAlurMagangController.fetchAlurMagang();
+  }
 
   bool validate() {
     if (selectedFile.value == null) {

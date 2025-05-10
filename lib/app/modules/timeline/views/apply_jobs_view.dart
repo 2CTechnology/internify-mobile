@@ -498,65 +498,65 @@ class ApplyJobs extends GetView<TimelineController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(
-                        height: 17,
-                      ),
-                      const Text(
-                        "Choose Supervisor",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade400),
-                          color: Colors.white,
-                        ),
-                        padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Obx(
-                              () {
-                                return DropdownButton<DataDosen>(
-                                  menuMaxHeight: 400,
-                                  isExpanded: true,
-                                  underline: const SizedBox.shrink(),
-                                  value:
-                                      fetchDosenController.selectedDosen.value,
-                                  items: fetchDosenController.dosenList
-                                      .map((DataDosen data) {
-                                    return DropdownMenuItem<DataDosen>(
-                                      value: data,
-                                      child: Text(data.name),
-                                    );
-                                  }).toList(),
-                                  onChanged: (DataDosen? newValue) {
-                                    if (newValue != null) {
-                                      fetchDosenController.selectedDosen.value =
-                                          newValue;
-                                      fetchDosenController.validateSelection();
-                                    }
-                                  },
-                                );
-                              },
-                            ),
-                            Obx(
-                              () {
-                                return fetchDosenController.isValidDosen.value
-                                    ? const SizedBox.shrink()
-                                    : const Text(
-                                        'Please select a valid option',
-                                        style: TextStyle(color: Colors.red),
-                                      );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+                      // const SizedBox(
+                      //   height: 17,
+                      // ),
+                      // const Text(
+                      //   "Choose Supervisor",
+                      //   style: TextStyle(
+                      //       fontSize: 15, fontWeight: FontWeight.bold),
+                      // ),
+                      // const SizedBox(
+                      //   height: 10,
+                      // ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     border: Border.all(color: Colors.grey.shade400),
+                      //     color: Colors.white,
+                      //   ),
+                      //   padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.stretch,
+                      //     children: [
+                      //       Obx(
+                      //         () {
+                      //           return DropdownButton<DataDosen>(
+                      //             menuMaxHeight: 400,
+                      //             isExpanded: true,
+                      //             underline: const SizedBox.shrink(),
+                      //             value:
+                      //                 fetchDosenController.selectedDosen.value,
+                      //             items: fetchDosenController.dosenList
+                      //                 .map((DataDosen data) {
+                      //               return DropdownMenuItem<DataDosen>(
+                      //                 value: data,
+                      //                 child: Text(data.name),
+                      //               );
+                      //             }).toList(),
+                      //             onChanged: (DataDosen? newValue) {
+                      //               if (newValue != null) {
+                      //                 fetchDosenController.selectedDosen.value =
+                      //                     newValue;
+                      //                 fetchDosenController.validateSelection();
+                      //               }
+                      //             },
+                      //           );
+                      //         },
+                      //       ),
+                      //       Obx(
+                      //         () {
+                      //           return fetchDosenController.isValidDosen.value
+                      //               ? const SizedBox.shrink()
+                      //               : const Text(
+                      //                   'Please select a valid option',
+                      //                   style: TextStyle(color: Colors.red),
+                      //                 );
+                      //         },
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       const SizedBox(
                         height: 17,
                       ),

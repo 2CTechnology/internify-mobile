@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:simag_app/app/modules/home/views/home_view.dart';
 import 'package:simag_app/app/modules/profile/views/profile_view.dart';
 import 'package:simag_app/app/modules/jobs/views/jobs_view.dart';
+import 'package:simag_app/app/modules/timeline/controllers/timeline_controller.dart';
 import 'package:simag_app/app/modules/timeline/views/timeline_view.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
@@ -60,7 +61,11 @@ class NavigationBarView extends GetView<NavigationBarController> {
           children: [
             HomeView(),
             const JobsView(),
-            const TimelineView(),
+            // const TimelineView(),
+            GetBuilder<TimelineController>(
+              init: TimelineController()..fetchTimelineData(),
+              builder: (_) => const TimelineView(),
+            ),
             const ProfileView(),
           ],
         ),
