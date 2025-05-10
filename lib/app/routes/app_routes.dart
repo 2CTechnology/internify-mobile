@@ -27,6 +27,7 @@ abstract class Routes {
   static const MY_TEAM = _Paths.MY_TEAM;
   static const MEMBER_TEAM = _Paths.MEMBER_TEAM;
   static const COUNSELING = _Paths.COUNSELING;
+  static const CHATBOT = _Paths.CHATBOT;
 }
 
 abstract class _Paths {
@@ -53,4 +54,5 @@ abstract class _Paths {
   static const MY_TEAM = '/my-team';
   static const MEMBER_TEAM = '/member-team';
   static const COUNSELING = '/counseling';
+  static const CHATBOT = '/chatbot';
 }

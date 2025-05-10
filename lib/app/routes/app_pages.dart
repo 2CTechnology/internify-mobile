@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:simag_app/app/modules/home/views/chatbot_view.dart';
 import 'package:simag_app/app/modules/jobs/views/about_jobs_view.dart';
 import 'package:simag_app/app/modules/profile/views/counseling_view.dart';
 import 'package:simag_app/app/modules/timeline/views/apply_jobs_view.dart';
@@ -139,6 +140,10 @@ class AppPages {
     GetPage(
       name: _Paths.MEMBER_TEAM,
       page: () => const MemberTeamView(memberCount: 0),
+    ),
+    GetPage(
+      name: _Paths.CHATBOT,
+      page: () => const ChatbotView(),
     ),
   ];
 }

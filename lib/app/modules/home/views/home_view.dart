@@ -2,8 +2,10 @@
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:simag_app/app/routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 import 'package:simag_app/app/data/db_provider.dart';
 
@@ -264,6 +266,14 @@ class _HomeViewState extends State<HomeView> {
                 ),
               );
             }),
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Get.toNamed(Routes.CHATBOT),
+          backgroundColor: Colors.deepPurpleAccent,
+          child: const Icon(
+            Icons.chat,
+            color: Colors.white,
           ),
         ),
       ),
