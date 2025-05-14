@@ -28,6 +28,8 @@ class MemberTeamView extends StatefulWidget {
 
 class _MemberTeamViewState extends State<MemberTeamView> {
   final List<GlobalKey<FormBuilderState>> _formKeys = [];
+  final GlobalKey<FormBuilderState> _teamFormKey =
+      GlobalKey<FormBuilderState>();
   int currentPage = 0;
   int id = 0;
   String token = "";
@@ -130,9 +132,11 @@ class _MemberTeamViewState extends State<MemberTeamView> {
                 Consumer<ProfileController>(
                   builder: (context, profileController, child) {
                     var teamData = profileController.teamName;
-                    _teamNameController.text = teamData["nama_kelompok"] ?? '';
+                    if (_teamNameController.text.isEmpty && teamData["nama_kelompok"] != null) {
+                      _teamNameController.text = teamData["nama_kelompok"];
+                    }
                     return FormBuilder(
-                      key: GlobalKey<FormBuilderState>(),
+                      key: _teamFormKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -178,7 +182,7 @@ class _MemberTeamViewState extends State<MemberTeamView> {
                               ),
                             ),
                             validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(),
+                              FormBuilderValidators.required(errorText: "Please enter a team name"),
                             ]),
                           ),
                           const SizedBox(height: 20),
@@ -248,12 +252,19 @@ class _MemberTeamViewState extends State<MemberTeamView> {
                       onPressed: submit.isLoading
                           ? null
                           : () async {
-                              if (_formKeys[currentPage]
-                                  .currentState!
-                                  .saveAndValidate()) {
+                              if (currentPage == 0) {
+                                if (_teamFormKey.currentState!.saveAndValidate()) {
+                                  _teamNameController.text =
+                                      _teamFormKey.currentState!.fields['teamName']?.value ?? '';
+                                } else {
+                                  return;
+                                }
+                              }
+
+                              // Validasi & simpan data anggota
+                              if (_formKeys[currentPage].currentState!.saveAndValidate()) {
                                 membersData[currentPage] =
-                                    MemberData.fromFormBuilderState(
-                                        _formKeys[currentPage].currentState!);
+                                    MemberData.fromFormBuilderState(_formKeys[currentPage].currentState!);
 
                                 if (currentPage < widget.memberCount - 1) {
                                   setState(() {
@@ -371,12 +382,14 @@ class _MemberTeamViewState extends State<MemberTeamView> {
             name: 'Fullname',
             label: 'Fullname',
             hint: 'Enter Fullname',
+            validators: [FormBuilderValidators.required()],
           ),
           const SizedBox(height: 15),
           buildTextField(
             name: 'NIM',
             label: 'NIM',
             hint: 'Enter NIM',
+            validators: [FormBuilderValidators.required()],
           ),
           const SizedBox(height: 15),
           degreeProvider.degree.isNotEmpty
@@ -395,6 +408,10 @@ class _MemberTeamViewState extends State<MemberTeamView> {
                       color: Colors.black,
                     ),
                   ),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(
+                        errorText: "Please select a degree program"),
+                  ]),
                   decoration: InputDecoration(
                     labelText: "Degree Program",
                     labelStyle: GoogleFonts.poppins(
@@ -460,18 +477,21 @@ class _MemberTeamViewState extends State<MemberTeamView> {
             name: 'college',
             label: 'College Class',
             hint: 'Enter angkatan',
+            validators: [FormBuilderValidators.required()],
           ),
           const SizedBox(height: 15),
           buildTextField(
             name: 'group',
             label: 'Group Class',
             hint: 'Enter Golongan',
+            validators: [FormBuilderValidators.required()],
           ),
           const SizedBox(height: 15),
           buildTextField(
             name: 'PhoneNumber',
             label: 'Phone Number',
             hint: 'Enter Phone Number',
+            validators: [FormBuilderValidators.required()],
           ),
           const SizedBox(height: 15),
         ],
@@ -568,7 +588,7 @@ class _MemberTeamViewState extends State<MemberTeamView> {
         ),
       ),
       validator: FormBuilderValidators.compose([
-        FormBuilderValidators.required(),
+        FormBuilderValidators.required(errorText: "Please select a date"),
       ]),
     );
   }
