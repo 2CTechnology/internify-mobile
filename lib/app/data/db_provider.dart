@@ -61,4 +61,10 @@ class DatabaseProvider extends ChangeNotifier {
 
     value.clear();
   }
+
+  Future<int> getIdUser() async {
+    // contoh asumsi kamu menyimpan ID sebagai string di SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('id_user') ?? 0;
+  }
 }
