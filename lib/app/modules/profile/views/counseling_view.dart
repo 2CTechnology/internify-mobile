@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:simag_app/app/data/db_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:simag_app/app/modules/profile/controllers/profile_controller.dart';
-import 'package:simag_app/app/modules/notification/notif_service.dart';
 import 'package:simag_app/app/modules/profile/controllers/counseling_controller.dart';
 import 'package:simag_app/app/modules/profile/controllers/fetch_counseling.dart';
 
@@ -28,8 +27,6 @@ class CounselingView extends GetView<CounselingController> {
       controller.fetchCounselingSchedule(dbProvider);
     });
 
-    // PlatformFile? selectedProposalFile;
-
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(),
@@ -40,192 +37,108 @@ class CounselingView extends GetView<CounselingController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 32),
-            const Text("Laporan Magang",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-
-//kode lama
-            /// Upload proposal dengan StatefulBuilder
-            // StatefulBuilder(
-            //   builder: (context, setState) {
-            //     return Container(
-            //       decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.circular(12),
-            //         border: Border.all(color: Colors.grey.shade300),
-            //       ),
-            //       padding: const EdgeInsets.all(16),
-            //       child: Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           Row(
-            //             children: [
-            //               const Icon(Icons.upload_file,
-            //                   color: Colors.orange, size: 40),
-            //               const SizedBox(width: 12),
-            //               Expanded(
-            //                 child: Column(
-            //                   crossAxisAlignment: CrossAxisAlignment.start,
-            //                   children: [
-            //                     Text(
-            //                       selectedProposalFile != null
-            //                           ? selectedProposalFile!.name
-            //                           : "Belum ada file Laporan",
-            //                       style: const TextStyle(
-            //                           fontWeight: FontWeight.w500),
-            //                     ),
-            //                     const SizedBox(height: 4),
-            //                     Text(
-            //                       selectedProposalFile != null
-            //                           ? "${(selectedProposalFile!.size / 1024).toStringAsFixed(1)} KB"
-            //                           : "Unggah file Laporan Anda dalam format PDF.",
-            //                       style: const TextStyle(color: Colors.grey),
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //           const SizedBox(height: 16),
-            //           Align(
-            //             alignment: Alignment.centerRight,
-            //             child: ElevatedButton.icon(
-            //               onPressed: () async {
-            //                 FilePickerResult? result =
-            //                     await FilePicker.platform.pickFiles(
-            //                   type: FileType.custom,
-            //                   allowedExtensions: ['pdf'],
-            //                 );
-            //                 if (result != null) {
-            //                   setState(() {
-            //                     selectedProposalFile = result.files.first;
-
-            //                     NotifService().showNotification(
-            //                       title: "Internify",
-            //                       body: "Laporan Berhasil Diunggah",
-            //                     );
-            //                   });
-            //                 }
-            //               },
-            //               icon: const Icon(
-            //                 Icons.upload_file,
-            //                 color: Colors.grey,
-            //               ),
-            //               label: const Text("Unggah Laporannnnnnn"),
-            //               style: ElevatedButton.styleFrom(
-            //                 shape: RoundedRectangleBorder(
-            //                     borderRadius: BorderRadius.circular(8)),
-            //               ),
-            //             ),
-            //           )
-            //         ],
-            //       ),
-            //     );
-            //   },
-            // ),
-
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 15),
+              margin: EdgeInsets.symmetric(horizontal: 5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Upload Laporan Magang dengan format PDF",
-                  ),
+                  const SizedBox(height: 32),
+                  const Text("Laporan Magang",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  const Text("Upload Laporan Magang dengan format PDF"),
                   SizedBox(
                     height: 17,
-                  ),
-                  Obx(
-                    () => controller.selectedFile.value == null
-                        ? SizedBox(
-                            width: double.infinity,
-                            child: OutlinedButton(
-                              onPressed: () => controller.pickFile(),
-                              style: OutlinedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 16.0, horizontal: 32.0),
-                                side: BorderSide(color: Colors.grey.shade400),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.upload_file,
-                                      color: Colors.grey.shade700),
-                                  SizedBox(width: 8.0),
-                                  Text(
-                                    'Upload Proposal',
-                                    style:
-                                        TextStyle(color: Colors.grey.shade700),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : Container(
-                            padding: EdgeInsets.all(16.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade400),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.picture_as_pdf, color: Colors.red),
-                                SizedBox(width: 8.0),
-                                Expanded(
-                                  child: Text(
-                                    controller.selectedFile.value!.name,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                SizedBox(width: 8.0),
-                                Text(
-                                  '${(controller.selectedFile.value!.size / 1024).toStringAsFixed(1)} Kb',
-                                  style: TextStyle(color: Colors.grey.shade600),
-                                ),
-                                SizedBox(width: 8.0),
-                                IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
-                                  onPressed: controller.removeFile,
-                                ),
-                              ],
-                            ),
-                          ),
-                  ),
-                  SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        // NotifService().showNotification(
-                        //   title: "Internify",
-                        //   body: "Laporan Berhasil Diunggah",
-                        // );
-                      },
-                      style: ButtonStyle(
-                        shape: MaterialStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        backgroundColor: MaterialStatePropertyAll(
-                          Color.fromARGB(255, 70, 116, 222),
-                        ),
-                      ),
-                      child: Text(
-                        "Kirim Laporan",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
                   ),
                 ],
               ),
             ),
-////batas kode baru
+            Obx(
+              () => controller.selectedFile.value == null
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => controller.pickFile(),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 32.0),
+                          side: BorderSide(color: Colors.grey.shade400),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.upload_file,
+                                color: Colors.grey.shade700),
+                            SizedBox(width: 8.0),
+                            Text(
+                              'Upload Proposal',
+                              style: TextStyle(color: Colors.grey.shade700),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.picture_as_pdf, color: Colors.red),
+                          SizedBox(width: 8.0),
+                          Expanded(
+                            child: Text(
+                              controller.selectedFile.value!.name,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(width: 8.0),
+                          Text(
+                            '${(controller.selectedFile.value!.size / 1024).toStringAsFixed(1)} Kb',
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                          SizedBox(width: 8.0),
+                          IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: controller.removeFile,
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+            SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {},
+                style: ButtonStyle(
+                  shape: MaterialStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  backgroundColor: MaterialStatePropertyAll(
+                    Color.fromARGB(255, 70, 116, 222),
+                  ),
+                ),
+                child: Text(
+                  "Kirim Laporan",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            // ],
+            // ),
+            // ),
             const SizedBox(height: 32),
+            //jadwal mendatang
             const Text("Jadwal Mendatang",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
@@ -252,6 +165,7 @@ class CounselingView extends GetView<CounselingController> {
               );
             }),
             const SizedBox(height: 24),
+            //jadwal selesai
             const Text("Selesai",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
@@ -277,13 +191,6 @@ class CounselingView extends GetView<CounselingController> {
                 }).toList(),
               );
             }),
-            const SizedBox(height: 12),
-            _scheduleCard(
-              subject: "Subjek",
-              date: "24 Oktober 2025",
-              time: "13.00",
-              isDone: true,
-            ),
           ],
         ),
       ),
@@ -310,7 +217,7 @@ class CounselingView extends GetView<CounselingController> {
               children: [
                 Text(subject,
                     style: const TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 Text(date),
               ],
             ),
