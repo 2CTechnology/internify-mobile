@@ -62,6 +62,16 @@ class DatabaseProvider extends ChangeNotifier {
     value.clear();
   }
 
+  void saveKelompokId(int idKelompok) async {
+    SharedPreferences prefs = await _pref;
+    prefs.setInt('id_kelompok', idKelompok);
+  }
+
+  Future<int> getKelompokId() async {
+    SharedPreferences prefs = await _pref;
+    return prefs.getInt('id_kelompok') ?? 0;
+  }
+
   Future<int> getIdUser() async {
     // contoh asumsi kamu menyimpan ID sebagai string di SharedPreferences
     final prefs = await SharedPreferences.getInstance();

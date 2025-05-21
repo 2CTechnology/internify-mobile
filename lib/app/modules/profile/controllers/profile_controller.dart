@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:simag_app/app/constant/url.dart';
 import 'package:simag_app/app/modules/profile/views/member_team_view.dart';
 import 'package:simag_app/app/routes/app_pages.dart';
+import 'package:simag_app/app/data/db_provider.dart';
 
 class ProfileController extends ChangeNotifier {
   final requestBaseUrl = AppUrl.baseUrl;
@@ -323,6 +324,12 @@ class ProfileController extends ChangeNotifier {
 
         print(res);
 
+        //save id kelompok
+        final dbProvider = Get.find<DatabaseProvider>();
+        final idKelompok = res['response']['id'];
+        dbProvider.saveKelompokId(idKelompok);
+        print("id_kelompok tersimpan: $idKelompok");
+
         _isLoading = false;
         _message = "Successfully Created Team";
 
@@ -390,6 +397,10 @@ class ProfileController extends ChangeNotifier {
         final res = json.decode(response.body);
 
         print(res);
+        //id kelompok
+        final dbProvider = Get.find<DatabaseProvider>();
+        dbProvider.saveKelompokId(idKelompok);
+        print("id_kelompok: $idKelompok");
 
         _isLoading = false;
         _message = "Successfully Updated Team";
