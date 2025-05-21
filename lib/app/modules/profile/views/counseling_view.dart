@@ -117,7 +117,9 @@ class CounselingView extends GetView<CounselingController> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  controller.uploadLaporan();
+                },
                 style: ButtonStyle(
                   shape: MaterialStatePropertyAll(
                     RoundedRectangleBorder(

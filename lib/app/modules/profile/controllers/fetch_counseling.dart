@@ -25,6 +25,7 @@ class CounselingFetcher {
       },
     );
 
+//tes respon
     print("🛰 URL: $url");
     print("📡 Status Code: ${response.statusCode}");
     print("📄 Body: ${response.body}");

@@ -68,10 +68,60 @@ class CounselingController extends GetxController {
     }
   }
 
+//hapus file
   void removeFile() {
     selectedFile.value = null;
     // controller.filepath = "";
     print("File terhapus");
+  }
+
+//upload laporan
+  Future<void> uploadLaporan() async {
+    if (selectedFile.value == null) {
+      Get.snackbar("Gagal", "Silakan pilih file PDF terlebih dahulu");
+      return;
+    }
+
+    final filePath = selectedFile.value!.path;
+    if (filePath == null || filePath.isEmpty) {
+      Get.snackbar("Error", "Path file tidak ditemukan");
+      return;
+    }
+
+    final dbProvider = Get.find<DatabaseProvider>();
+    final idKelompok = await dbProvider.getKelompokId();
+    print("🧠 ID Kelompok: $idKelompok");
+    final token = await dbProvider.getToken();
+    final url = Uri.parse('${AppUrl.baseUrl}/post-laporan/$idKelompok');
+
+    final request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = 'Bearer $token';
+
+    //print token
+    print("🔑 Token: $token");
+
+    request.files.add(await http.MultipartFile.fromPath('laporan', filePath));
+
+    print("🛰 URL: $url");
+
+    try {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      //tes respon
+      print("📡 Status Code: ${response.statusCode}");
+      print("📄 Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        Get.snackbar("Sukses", "Laporan berhasil dikirim");
+        removeFile();
+      } else {
+        Get.snackbar("Gagal", "Upload gagal (${response.statusCode})");
+      }
+    } catch (e) {
+      print("Error: $e");
+      Get.snackbar("Error", "Terjadi kesalahan: $e");
+    }
   }
 
 // jadwal
