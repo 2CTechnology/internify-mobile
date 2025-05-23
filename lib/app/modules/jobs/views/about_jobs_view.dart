@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:simag_app/app/modules/jobs/controllers/fetch_jobs_controller.dart';
+import 'package:simag_app/app/modules/timeline/controllers/post_jobs_controller.dart';
 import 'package:simag_app/app/routes/app_pages.dart';
 // import 'package:simag_app/app/routes/app_pages.dart';
 import '../controllers/jobs_controller.dart';
@@ -15,12 +16,18 @@ class AboutJobs extends GetView<JobsController> {
 
   @override
   Widget build(BuildContext context) {
-    FetchJobsByIdController fetchController = Get.find();
+    final FetchJobsByIdController fetchController = Get.find();
     fetchController.fetchJobsById();
 
-    void _apply() {
-      Get.toNamed(Routes.APPLY_JOBS);
-    }
+    // void _apply() {
+    //   Get.toNamed(
+    //     Routes.APPLY_JOBS,
+    //     // arguments: {
+    //     //   'company': job.namaTempat,
+    //     //   'position': job.posisi,
+    //     // }
+    //     );
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -43,6 +50,14 @@ class AboutJobs extends GetView<JobsController> {
             );
           } else {
             final job = fetchController.jobsModel.value.data;
+
+            // void _apply() {
+            //   final postController = Get.put(PostJobsController());
+            //   postController.tempatMagang = job.namaTempat;
+            //   postController.posisiMagang = job.posisi;
+            //   Get.toNamed(Routes.APPLY_JOBS);
+            // }
+
             return Stack(
               children: [
                 Column(
@@ -117,33 +132,33 @@ class AboutJobs extends GetView<JobsController> {
                     ),
                   ],
                 ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 22),
-                    color: Colors.white,
-                    height: 78,
-                    child: TextButton(
-                      onPressed: () => Get.toNamed(Routes.APPLY_JOBS),
-                      style: ButtonStyle(
-                        shape: MaterialStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        backgroundColor: MaterialStatePropertyAll(
-                          Color.fromARGB(255, 70, 116, 222),
-                        ),
-                      ),
-                      child: Text(
-                        "Apply Now",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
+                // Positioned(
+                //   left: 0,
+                //   right: 0,
+                //   bottom: 0,
+                //   child: Container(
+                //     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 22),
+                //     color: Colors.white,
+                //     height: 78,
+                //     child: TextButton(
+                //       onPressed: () => _apply(),
+                //       style: ButtonStyle(
+                //         shape: MaterialStatePropertyAll(
+                //           RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.circular(8),
+                //           ),
+                //         ),
+                //         backgroundColor: MaterialStatePropertyAll(
+                //           Color.fromARGB(255, 70, 116, 222),
+                //         ),
+                //       ),
+                //       child: Text(
+                //         "Apply Now",
+                //         style: TextStyle(color: Colors.white),
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             );
           }
