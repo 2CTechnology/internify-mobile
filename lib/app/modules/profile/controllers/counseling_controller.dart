@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:simag_app/app/constant/url.dart';
 import 'package:simag_app/app/data/db_provider.dart';
+import 'package:simag_app/app/modules/timeline/controllers/fetch_jobs_controller.dart';
 import 'package:simag_app/app/modules/profile/controllers/fetch_counseling.dart';
 
 class CounselingController extends GetxController {
@@ -102,8 +103,10 @@ class CounselingController extends GetxController {
 // jadwal
   Future<void> fetchCounselingSchedule(DatabaseProvider dbProvider) async {
     final token = await dbProvider.getToken();
-    // final userId = await dbProvider.getIdUser();
-    final idKelompok = await dbProvider.getKelompokId();
+   final FetchKelompokController fetchKelompok =
+        Get.put(FetchKelompokController());
+    await fetchKelompok.fetchKelompok();
+    final idKelompok = fetchKelompok.kelompokModel.value.response.id;
 
     final url = Uri.parse('${AppUrl.baseUrl}/jadwal-bimbingan/$idKelompok');
 
@@ -117,6 +120,7 @@ class CounselingController extends GetxController {
       print("🛰 URL: $url");
       print("📡 Status Code: ${response.statusCode}");
       print("📄 Body: ${response.body}");
+      print(idKelompok);
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
