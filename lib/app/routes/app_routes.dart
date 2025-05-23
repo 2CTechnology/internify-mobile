@@ -49,6 +49,7 @@ abstract class _Paths {
   static const ABOUT_JOBS_PAGE2 = '/about-jobs-page2';
   static const APPLY_JOBS = '/apply-jobs';
   static const SURAT_BALASAN = '/surat-balasan';
+  static const SURAT_PELAKSANAAN = '/surat-pelaksanaan';
   static const ABOUT_PROFILE = '/about-profile';
   static const MY_PROFILE = '/my-profile';
   static const MY_TEAM = '/my-team';

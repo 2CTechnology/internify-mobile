@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simag_app/app/modules/timeline/controllers/timeline_controller.dart';
 
 class NavigationBarController extends GetxController {
   late PageController pageController;
@@ -9,6 +10,9 @@ class NavigationBarController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    if (!Get.isRegistered<TimelineController>()) {
+    Get.put(TimelineController());
+  }
     pageController = PageController(initialPage: currentPage.value);
   }
 

@@ -62,11 +62,12 @@ class DataAlurMagang {
   String statusProposal;
   dynamic revisiProposal;
   dynamic alasanProposalDitolak;
+  dynamic alasanSuratBalasanDitolak;
   String? tempatMagang;
   String? namaPosisi;
   dynamic suratBalasan;
-  dynamic suratPengantar;
-  dynamic status;
+  dynamic suratPelaksanaan;
+  dynamic statusSuratBalasan;
   DateTime createdAt;
   DateTime updatedAt;
   dynamic idTempatMagang;
@@ -81,8 +82,8 @@ class DataAlurMagang {
     required this.tempatMagang,
     required this.namaPosisi,
     required this.suratBalasan,
-    required this.suratPengantar,
-    required this.status,
+    required this.suratPelaksanaan,
+    required this.statusSuratBalasan,
     required this.createdAt,
     required this.updatedAt,
     required this.idTempatMagang,
@@ -98,8 +99,9 @@ class DataAlurMagang {
         tempatMagang: json["tempat_magang"],
         namaPosisi: json["nama_posisi"],
         suratBalasan: json["surat_balasan"],
-        suratPengantar: json["surat_pengantar"],
-        status: json["status"],
+        // ganti
+        suratPelaksanaan: json["surat_pengantar"],
+        statusSuratBalasan: json["status_surat_balasan"],
         createdAt: DateTime.tryParse(json["created_at"] ?? '') ?? DateTime.now(),
         updatedAt: DateTime.tryParse(json["updated_at"] ?? '') ?? DateTime.now(),
         idTempatMagang: json["id_tempat_magang"],
@@ -115,8 +117,9 @@ class DataAlurMagang {
         "tempat_magang": tempatMagang,
         "nama_posisi": namaPosisi,
         "surat_balasan": suratBalasan,
-        "surat_pengantar": suratPengantar,
-        "status": status,
+        // ganti
+        "surat_pengantar": suratPelaksanaan,
+        "status_surat_balasan": statusSuratBalasan,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "id_tempat_magang": idTempatMagang,

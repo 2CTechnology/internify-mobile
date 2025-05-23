@@ -22,65 +22,41 @@ class ApplyJobs extends GetView<TimelineController> {
   final _positionController = TextEditingController();
 
   void _submit() {
-    if (controller.validate() &&
-        fetchDosenController.isValidDosen.value &&
-        _companyNameController.text.isNotEmpty &&
-        _positionController.text.isNotEmpty) {
+    if (_companyNameController.text.isNotEmpty &&
+        _positionController.text.isNotEmpty &&
+        controller.selectedProposalFile.value != null) {
       postController.tempatMagang = _companyNameController.text;
       postController.posisiMagang = _positionController.text;
-      postController.filepath = controller.selectedFile.value!.path!;
+      postController.filepath = controller.selectedProposalFile.value!.path;
       postController.postProposal();
       print("Form valid and submitted");
     } else {
-      if (_companyNameController.text.isEmpty ||
-          _positionController.text.isEmpty) {
-        Get.snackbar("Error", "Please fill in company name and position",
-            animationDuration: const Duration(milliseconds: 300),
-            duration: const Duration(milliseconds: 1650),
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            borderWidth: 5.0,
-            snackPosition: SnackPosition.BOTTOM,
-            margin: const EdgeInsets.all(20.0),
-            icon: const Icon(CupertinoIcons.info_circle));
-      } else if (fetchDosenController.isValidDosen.value == false) {
-        Get.snackbar(
-          "Error",
-          "Please select a supervisor",
-          animationDuration: const Duration(milliseconds: 300),
-          duration: const Duration(milliseconds: 1650),
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          borderWidth: 5.0,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(20.0),
-          icon: const Icon(CupertinoIcons.info_circle),
-        );
-      } else if (controller.selectedFile.value == null) {
-        Get.snackbar(
-          "Error",
-          "File Is Required",
-          animationDuration: const Duration(milliseconds: 300),
-          duration: const Duration(milliseconds: 1650),
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          borderWidth: 5.0,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(20.0),
-          icon: const Icon(CupertinoIcons.info_circle),
-        );
-      }
-      print("Form not valid");
+      Get.snackbar(
+        "Error",
+        "Please fill in all fields and upload a file",
+        animationDuration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 1650),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        borderWidth: 5.0,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(20.0),
+        icon: const Icon(CupertinoIcons.info_circle),
+      );
     }
   }
 
   void _submitRevisi() {
-    if (controller.validate()) {
-      postController.filepath = controller.selectedFile.value!.path!;
-      postController.postRevisi();
+    if (_companyNameController.text.isNotEmpty &&
+        _positionController.text.isNotEmpty &&
+        controller.selectedProposalFile.value != null) {
+      postController.tempatMagang = _companyNameController.text;
+      postController.posisiMagang = _positionController.text;
+      postController.filepath = controller.selectedProposalFile.value!.path;
+      postController.postProposal();
       print("Form valid and submitted");
     } else {
-      if (controller.selectedFile.value == null) {
+      if (controller.selectedProposalFile.value == null) {
         Get.snackbar(
           "Error",
           "File Is Required",
@@ -100,6 +76,18 @@ class ApplyJobs extends GetView<TimelineController> {
 
   @override
   Widget build(BuildContext context) {
+    final alur =
+        fetchAlurMagangController.alurMagangModel.value.data.dataAlurMagang;
+
+    // Isi otomatis field jika belum diisi
+    if (_companyNameController.text.isEmpty && alur?.tempatMagang != null) {
+      _companyNameController.text = alur!.tempatMagang!;
+    }
+
+    if (_positionController.text.isEmpty && alur?.namaPosisi != null) {
+      _positionController.text = alur!.namaPosisi!;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -145,12 +133,18 @@ class ApplyJobs extends GetView<TimelineController> {
                         color: Colors.white,
                       ),
                       child: TextField(
+                        controller: TextEditingController(
+                          text: fetchAlurMagangController.alurMagangModel.value
+                                  .data.dataAlurMagang?.tempatMagang ??
+                              '',
+                        ),
+                        readOnly: true,
                         decoration: InputDecoration(
-                          hintText: fetchAlurMagangController.alurMagangModel
-                              .value.data.dataAlurMagang?.tempatMagang,
+                          // hintText: fetchAlurMagangController.alurMagangModel
+                          //     .value.data.dataAlurMagang?.tempatMagang,
                           border: InputBorder.none,
                         ),
-                        enabled: false,
+                        // enabled: false,
                       ),
                     ),
                   ],
@@ -176,12 +170,18 @@ class ApplyJobs extends GetView<TimelineController> {
                         color: Colors.white,
                       ),
                       child: TextField(
+                        controller: TextEditingController(
+                          text: fetchAlurMagangController.alurMagangModel.value
+                                  .data.dataAlurMagang?.namaPosisi ??
+                              '',
+                        ),
+                        readOnly: true,
                         decoration: InputDecoration(
-                          hintText: fetchAlurMagangController.alurMagangModel
-                              .value.data.dataAlurMagang?.namaPosisi,
+                          // hintText: fetchAlurMagangController.alurMagangModel
+                          //     .value.data.dataAlurMagang?.namaPosisi,
                           border: InputBorder.none,
                         ),
-                        enabled: false,
+                        // enabled: false,
                       ),
                     ),
                   ],
@@ -218,12 +218,14 @@ class ApplyJobs extends GetView<TimelineController> {
                         color: Colors.white,
                       ),
                       child: TextField(
+                        controller: _companyNameController,
+                        readOnly: true,
                         decoration: InputDecoration(
-                          hintText: fetchAlurMagangController.alurMagangModel
-                              .value.data.dataAlurMagang?.tempatMagang,
+                          // hintText: fetchAlurMagangController.alurMagangModel
+                          //     .value.data.dataAlurMagang?.tempatMagang,
                           border: InputBorder.none,
                         ),
-                        enabled: false,
+                        // enabled: false,
                       ),
                     ),
                   ],
@@ -249,12 +251,14 @@ class ApplyJobs extends GetView<TimelineController> {
                         color: Colors.white,
                       ),
                       child: TextField(
+                        controller: _positionController,
+                        readOnly: true,
                         decoration: InputDecoration(
-                          hintText: fetchAlurMagangController.alurMagangModel
-                              .value.data.dataAlurMagang?.namaPosisi,
+                          // hintText: fetchAlurMagangController.alurMagangModel
+                          //     .value.data.dataAlurMagang?.namaPosisi,
                           border: InputBorder.none,
                         ),
-                        enabled: false,
+                        // enabled: false,
                       ),
                     ),
                   ],
@@ -276,11 +280,11 @@ class ApplyJobs extends GetView<TimelineController> {
                   height: 17,
                 ),
                 Obx(
-                  () => controller.selectedFile.value == null
+                  () => controller.selectedProposalFile.value == null
                       ? SizedBox(
                           width: double.infinity,
                           child: OutlinedButton(
-                            onPressed: () => controller.pickFile(),
+                            onPressed: () => controller.pickProposalFile(),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 16.0, horizontal: 32.0),
@@ -317,20 +321,22 @@ class ApplyJobs extends GetView<TimelineController> {
                               const SizedBox(width: 8.0),
                               Expanded(
                                 child: Text(
-                                  controller.selectedFile.value!.name,
+                                  controller.selectedProposalFile.value!.path
+                                      .split('/')
+                                      .last,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               const SizedBox(width: 8.0),
                               Text(
-                                '${(controller.selectedFile.value!.size / 1024).toStringAsFixed(1)} Kb',
+                                '${(controller.selectedProposalFile.value!.lengthSync() / 1024).toStringAsFixed(1)} Kb',
                                 style: TextStyle(color: Colors.grey.shade600),
                               ),
                               const SizedBox(width: 8.0),
                               IconButton(
                                 icon:
                                     const Icon(Icons.delete, color: Colors.red),
-                                onPressed: controller.removeFile,
+                                onPressed: controller.clearProposalFile,
                               ),
                             ],
                           ),
@@ -407,6 +413,25 @@ class ApplyJobs extends GetView<TimelineController> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(
+                  height: 80,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    "Tahap selanjutnya pergi ke https://jti.polije.ac.id/jtisurat/ untuk membuat surat pengantar",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),
@@ -498,65 +523,6 @@ class ApplyJobs extends GetView<TimelineController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // const SizedBox(
-                      //   height: 17,
-                      // ),
-                      // const Text(
-                      //   "Choose Supervisor",
-                      //   style: TextStyle(
-                      //       fontSize: 15, fontWeight: FontWeight.bold),
-                      // ),
-                      // const SizedBox(
-                      //   height: 10,
-                      // ),
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     border: Border.all(color: Colors.grey.shade400),
-                      //     color: Colors.white,
-                      //   ),
-                      //   padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.stretch,
-                      //     children: [
-                      //       Obx(
-                      //         () {
-                      //           return DropdownButton<DataDosen>(
-                      //             menuMaxHeight: 400,
-                      //             isExpanded: true,
-                      //             underline: const SizedBox.shrink(),
-                      //             value:
-                      //                 fetchDosenController.selectedDosen.value,
-                      //             items: fetchDosenController.dosenList
-                      //                 .map((DataDosen data) {
-                      //               return DropdownMenuItem<DataDosen>(
-                      //                 value: data,
-                      //                 child: Text(data.name),
-                      //               );
-                      //             }).toList(),
-                      //             onChanged: (DataDosen? newValue) {
-                      //               if (newValue != null) {
-                      //                 fetchDosenController.selectedDosen.value =
-                      //                     newValue;
-                      //                 fetchDosenController.validateSelection();
-                      //               }
-                      //             },
-                      //           );
-                      //         },
-                      //       ),
-                      //       Obx(
-                      //         () {
-                      //           return fetchDosenController.isValidDosen.value
-                      //               ? const SizedBox.shrink()
-                      //               : const Text(
-                      //                   'Please select a valid option',
-                      //                   style: TextStyle(color: Colors.red),
-                      //                 );
-                      //         },
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                       const SizedBox(
                         height: 17,
                       ),
@@ -575,11 +541,12 @@ class ApplyJobs extends GetView<TimelineController> {
                         height: 17,
                       ),
                       Obx(
-                        () => controller.selectedFile.value == null
+                        () => controller.selectedProposalFile.value == null
                             ? SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton(
-                                  onPressed: () => controller.pickFile(),
+                                  onPressed: () =>
+                                      controller.pickProposalFile(),
                                   style: OutlinedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16.0, horizontal: 32.0),
@@ -619,13 +586,16 @@ class ApplyJobs extends GetView<TimelineController> {
                                     const SizedBox(width: 8.0),
                                     Expanded(
                                       child: Text(
-                                        controller.selectedFile.value!.name,
+                                        controller
+                                            .selectedProposalFile.value!.path
+                                            .split('/')
+                                            .last,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),
                                     Text(
-                                      '${(controller.selectedFile.value!.size / 1024).toStringAsFixed(1)} Kb',
+                                      '${(controller.selectedProposalFile.value!.lengthSync() / 1024).toStringAsFixed(1)} Kb',
                                       style: TextStyle(
                                           color: Colors.grey.shade600),
                                     ),
@@ -633,7 +603,7 @@ class ApplyJobs extends GetView<TimelineController> {
                                     IconButton(
                                       icon: const Icon(Icons.delete,
                                           color: Colors.red),
-                                      onPressed: controller.removeFile,
+                                      onPressed: controller.clearProposalFile,
                                     ),
                                   ],
                                 ),

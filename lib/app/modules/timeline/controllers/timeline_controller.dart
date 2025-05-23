@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
@@ -21,10 +22,39 @@ class TimelineController extends GetxController {
   final FetchAlurMagangController fetchAlurMagangController = Get.put(FetchAlurMagangController());
   var anggotaList = [].obs;
 
+  @override
+  void onReady() {
+    super.onReady();
+    fetchTimelineData(); // Fetch data setiap kali controller siap
+  }
+
   Future<void> fetchTimelineData() async {
-    await fetchKelompokController.fetchKelompok();
-    anggotaList.value = fetchKelompokController.kelompokModel.value.response.anggota;
-    await fetchAlurMagangController.fetchAlurMagang();
+    try {
+      if (!Get.isRegistered<FetchKelompokController>()) {
+        Get.put(FetchKelompokController());
+      }
+      await fetchKelompokController.fetchKelompok();
+      anggotaList.value = fetchKelompokController.kelompokModel.value.response.anggota;
+      
+      if (!Get.isRegistered<FetchAlurMagangController>()) {
+        Get.put(FetchAlurMagangController());
+      }
+      await fetchAlurMagangController.fetchAlurMagang()
+        .then((_) => print("✅ AlurMagang fetched ctrl"))
+        .catchError((e) => print("❌ Error fetching alur magang: $e"));
+    } catch (e) {
+      print("❌ Error in fetchTimelineData: $e");
+    Get.snackbar(
+      "Error",
+      "Failed to load timeline data",
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      icon: const Icon(Icons.error),
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(20),
+      duration: const Duration(seconds: 2),
+    );
+    }
   }
 
   bool validate() {
@@ -33,6 +63,9 @@ class TimelineController extends GetxController {
     }
     return true;
   }
+
+  Rx<File?> selectedProposalFile = Rx<File?>(null);
+  Rx<File?> selectedReplyLetterFile = Rx<File?>(null);
 
   void pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -53,10 +86,44 @@ class TimelineController extends GetxController {
     }
   }
 
-  void removeFile() {
-    selectedFile.value = null;
+  void pickReplyLetterFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      selectedReplyLetterFile.value = File(result.files.single.path!);
+      print("✅ Reply letter selected: ${selectedReplyLetterFile.value!.path}");
+    } else {
+      print("❌ Cancelled picking reply letter");
+    }
+  }
+
+  void pickProposalFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      selectedProposalFile.value = File(result.files.single.path!);
+      print("✅ Proposal file selected: ${selectedProposalFile.value!.path}");
+    } else {
+      print("❌ Cancelled picking proposal file");
+    }
+  }
+
+  void clearProposalFile() {
+    selectedProposalFile.value = null;
     controller.filepath = "";
-    print("File terhapus");
+    print("File proposal terhapus");
+  }
+
+  void clearReplyLetterFile() {
+    selectedReplyLetterFile.value = null;
+    controller.filepath = "";
+    print("File surat balasan terhapus");
   }
 
   Future<void> downloadFile() async {
@@ -72,9 +139,9 @@ class TimelineController extends GetxController {
     final idKelompok = fetchKelompok.kelompokModel.value.response.id;
     print(idKelompok);
 
-    final url = Uri.parse('$requestBaseUrl/download-surat-pengantar');
+    final url = Uri.parse('$requestBaseUrl/download-surat-pelaksanaan');
     final Directory appDocDir = await getApplicationDocumentsDirectory();
-    final String savePath = '${appDocDir.path}/surat-pengantar.pdf';
+    final String savePath = '${appDocDir.path}/surat-pelaksanaan.pdf';
 
     try {
       final response = await http.post(

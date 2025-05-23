@@ -55,17 +55,28 @@ class NavigationBarView extends GetView<NavigationBarController> {
       },
       child: Scaffold(
         body: PageView(
-          onPageChanged: controller.animateToPage,
+          onPageChanged: (index) {
+            controller.animateToPage(index);
+
+            // Jika index 2 adalah halaman Timeline
+            if (index == 2) {
+              if (Get.isRegistered<TimelineController>()) {
+                Get.find<TimelineController>().fetchTimelineData();
+              } else {
+                Get.put(TimelineController()).fetchTimelineData();
+              }
+            }
+          },
           controller: controller.pageController,
           physics: const BouncingScrollPhysics(),
           children: [
             HomeView(),
             const JobsView(),
-            // const TimelineView(),
-            GetBuilder<TimelineController>(
-              init: TimelineController()..fetchTimelineData(),
-              builder: (_) => const TimelineView(),
-            ),
+            const TimelineView(),
+            // GetBuilder<TimelineController>(
+            //   init: TimelineController()..fetchTimelineData(),
+            //   builder: (_) => const TimelineView(),
+            // ),
             const ProfileView(),
           ],
         ),

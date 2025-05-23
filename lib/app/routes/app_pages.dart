@@ -3,6 +3,7 @@ import 'package:simag_app/app/modules/home/views/chatbot_view.dart';
 import 'package:simag_app/app/modules/jobs/views/about_jobs_view.dart';
 import 'package:simag_app/app/modules/profile/views/counseling_view.dart';
 import 'package:simag_app/app/modules/timeline/views/apply_jobs_view.dart';
+import 'package:simag_app/app/modules/timeline/views/loa.dart';
 import 'package:simag_app/app/modules/timeline/views/surat_balasan_view.dart';
 import 'package:simag_app/app/modules/jobs/views/page1_about.dart';
 import 'package:simag_app/app/modules/jobs/views/page2_about.dart';
@@ -100,6 +101,10 @@ class AppPages {
     GetPage(
       name: _Paths.SURAT_BALASAN,
       page: () => const SuratBalasan(),
+    ),
+    GetPage(
+      name: _Paths.SURAT_PELAKSANAAN,
+      page: () => const SuratPelaksanaan(),
     ),
     GetPage(
       name: _Paths.PROFILE,
