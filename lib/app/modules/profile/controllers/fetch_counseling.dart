@@ -15,7 +15,9 @@ class CounselingFetcher {
     required String token,
     required int userId,
   }) async {
-    final String url = "${AppUrl.baseUrl}/jadwal-bimbingan";
+    final dbProvider = Get.find<DatabaseProvider>();
+    final idKelompok = await dbProvider.getKelompokId();
+    final String url = "${AppUrl.baseUrl}/jadwal-bimbingan/$idKelompok";
 
     final response = await http.get(
       Uri.parse(url),

@@ -1,15 +1,11 @@
 // ignore_for_file: unnecessary_overrides, avoid_print
-
 import 'dart:convert';
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:simag_app/app/constant/url.dart';
 import 'package:simag_app/app/data/db_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:simag_app/app/modules/profile/controllers/fetch_counseling.dart';
 
 class CounselingController extends GetxController {
@@ -27,21 +23,6 @@ class CounselingController extends GetxController {
     selectedIndex.value = index;
   }
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  // }
-
-  // @override
-  // void onReady() {
-  //   super.onReady();
-  // }
-
-  // @override
-  // void onClose() {
-  //   super.onClose();
-  // }
-
   bool validate() {
     if (selectedFile.value == null) {
       return false;
@@ -56,13 +37,7 @@ class CounselingController extends GetxController {
     );
 
     if (result != null) {
-      // PlatformFile file = result.files.first;
       selectedFile.value = result.files.first;
-      // print(file.name);
-      // print(file.bytes);
-      // print(file.size);
-      // print(file.extension);
-      // print(file.path);
     } else {
       print("Batal Pick File");
     }
@@ -71,7 +46,6 @@ class CounselingController extends GetxController {
 //hapus file
   void removeFile() {
     selectedFile.value = null;
-    // controller.filepath = "";
     print("File terhapus");
   }
 
@@ -114,7 +88,8 @@ class CounselingController extends GetxController {
 
       if (response.statusCode == 200) {
         Get.snackbar("Sukses", "Laporan berhasil dikirim");
-        removeFile();
+
+        // removeFile();
       } else {
         Get.snackbar("Gagal", "Upload gagal (${response.statusCode})");
       }
@@ -125,39 +100,46 @@ class CounselingController extends GetxController {
   }
 
 // jadwal
-
   Future<void> fetchCounselingSchedule(DatabaseProvider dbProvider) async {
     final token = await dbProvider.getToken();
-    final userId = await dbProvider.getIdUser();
-    final now = DateTime.now();
+    // final userId = await dbProvider.getIdUser();
+    final idKelompok = await dbProvider.getKelompokId();
+
+    final url = Uri.parse('${AppUrl.baseUrl}/jadwal-bimbingan/$idKelompok');
+
+    // final now = DateTime.now();
 
     try {
-      final data = await CounselingFetcher.getJadwalBimbingan(
-        token: token,
-        userId: userId,
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
       );
+      print("🛰 URL: $url");
+      print("📡 Status Code: ${response.statusCode}");
+      print("📄 Body: ${response.body}");
 
-      upcomingSchedules.value = data
-          .where((item) {
-            final jadwalStr = item["jadwal"];
-            if (jadwalStr == null) return false;
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        final data = jsonData['data'] as List;
 
-            final jadwal = DateTime.tryParse(jadwalStr);
-            return jadwal != null && jadwal.isAfter(DateTime.now());
-          })
-          .cast<Map<String, dynamic>>()
-          .toList();
+        upcomingSchedules.value = data
+            .where((item) {
+              final status = item["status"]?.toString().toLowerCase();
+              return status == "pending";
+            })
+            .cast<Map<String, dynamic>>()
+            .toList();
 
-      pastSchedules.value = data
-          .where((item) {
-            final jadwalStr = item["jadwal"];
-            if (jadwalStr == null) return false;
-
-            final jadwal = DateTime.tryParse(jadwalStr);
-            return jadwal != null && jadwal.isBefore(DateTime.now());
-          })
-          .cast<Map<String, dynamic>>()
-          .toList();
+        pastSchedules.value = data
+            .where((item) {
+              final status = item["status"]?.toString().toLowerCase();
+              return status == "selesai";
+            })
+            .cast<Map<String, dynamic>>()
+            .toList();
+      } else {
+        Get.snackbar("Gagal", "Gagal mengambil jadwal bimbingan");
+      }
     } catch (e) {
       print("Error mengambil jadwal: $e");
     }
@@ -168,59 +150,3 @@ class CounselingController extends GetxController {
     super.onInit();
   }
 }
-  // bool _isLoading = false;
-  // String _resMessage = "";
-  // Map<String, dynamic> _counselingData = {};
-
-  // bool get isLoading => _isLoading;
-  // String get resMessage => _resMessage;
-  // Map<String, dynamic> get counselingData => _counselingData;
-
-  // void _setLoading(bool value) {
-  //   _isLoading = value;
-  //   notifyListeners();
-  // }
-
-  // Future<void> getCounselingData({
-  //   required int userId,
-  //   required String token,
-  // }) async {
-  //   _setLoading(true);
-
-  //   String url = "$requestBaseUrl/get-counseling";
-  //   final body = {"id_user": userId};
-
-  //   try {
-  //     http.Response response = await http.post(
-  //       Uri.parse(url),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $token',
-  //       },
-  //       body: json.encode(body),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final res = json.decode(response.body);
-  //       _counselingData = res["response"];
-  //       _resMessage = "Success";
-  //     } else {
-  //       final res = json.decode(response.body);
-  //       _resMessage = res["message"];
-  //     }
-  //   } on SocketException catch (_) {
-  //     _resMessage = "Internet connection is not available";
-  //   } catch (e) {
-  //     _resMessage = "Please try again";
-  //     print(e);
-  //   } finally {
-  //     _setLoading(false);
-  //   }
-  // }
-
-  // void clearData() {
-  //   _counselingData = {};
-  //   _resMessage = "";
-  //   notifyListeners();
-  // }
-
