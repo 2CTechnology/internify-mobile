@@ -119,9 +119,15 @@ class AuthenticationProvider extends ChangeNotifier {
         // Save User Data & Navigate To Dashboard
         final userId = res["response"]["user"]["id"];
         final token = res["response"]["token"];
+        final user = res["response"]["user"];
+        final idKelompok = user["kelompok"]?["id"] ?? 0;
+        // DatabaseProvider().saveToken(token);
+        // DatabaseProvider().saveUserId(userId);
 
-        DatabaseProvider().saveToken(token);
-        DatabaseProvider().saveUserId(userId);
+        final dbProvider = DatabaseProvider();
+        dbProvider.saveToken(token);
+        dbProvider.saveUserId(userId);
+        dbProvider.saveKelompokId(idKelompok);
 
         Get.offAllNamed(Routes.NAVIGATION_BAR);
       } else {
