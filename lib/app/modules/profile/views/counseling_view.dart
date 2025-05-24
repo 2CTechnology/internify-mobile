@@ -40,6 +40,7 @@ class CounselingView extends GetView<CounselingController> {
           await controller.fetchCounselingSchedule(dbProvider);
         },
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
