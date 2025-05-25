@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "90407005085",
+    "project_id": "notif-internify",
+    "storage_bucket": "notif-internify.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90407005085:android:c771c6c1b02444d90d1d74",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcyrNQIeQRfgYCl9JSvqgQH7QVmh4yYyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90407005085:android:6fddd43ea8e7ba860d1d74",
+        "android_client_info": {
+          "package_name": "com.example.simag_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcyrNQIeQRfgYCl9JSvqgQH7QVmh4yYyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
