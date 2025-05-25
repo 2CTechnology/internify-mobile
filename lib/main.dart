@@ -22,7 +22,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:simag_app/app/modules/notification/notif_service.dart';
 
 void main() async {
+  //buat get
   Get.put(NavigationBarController());
+  Get.put(DatabaseProvider());
   WidgetsFlutterBinding.ensureInitialized();
 
   // // firebase

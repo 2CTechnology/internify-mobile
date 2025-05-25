@@ -132,7 +132,8 @@ class _MemberTeamViewState extends State<MemberTeamView> {
                 Consumer<ProfileController>(
                   builder: (context, profileController, child) {
                     var teamData = profileController.teamName;
-                    if (_teamNameController.text.isEmpty && teamData["nama_kelompok"] != null) {
+                    if (_teamNameController.text.isEmpty &&
+                        teamData["nama_kelompok"] != null) {
                       _teamNameController.text = teamData["nama_kelompok"];
                     }
                     return FormBuilder(
@@ -182,7 +183,8 @@ class _MemberTeamViewState extends State<MemberTeamView> {
                               ),
                             ),
                             validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(errorText: "Please enter a team name"),
+                              FormBuilderValidators.required(
+                                  errorText: "Please enter a team name"),
                             ]),
                           ),
                           const SizedBox(height: 20),
@@ -253,18 +255,25 @@ class _MemberTeamViewState extends State<MemberTeamView> {
                           ? null
                           : () async {
                               if (currentPage == 0) {
-                                if (_teamFormKey.currentState!.saveAndValidate()) {
-                                  _teamNameController.text =
-                                      _teamFormKey.currentState!.fields['teamName']?.value ?? '';
+                                if (_teamFormKey.currentState!
+                                    .saveAndValidate()) {
+                                  _teamNameController.text = _teamFormKey
+                                          .currentState!
+                                          .fields['teamName']
+                                          ?.value ??
+                                      '';
                                 } else {
                                   return;
                                 }
                               }
 
                               // Validasi & simpan data anggota
-                              if (_formKeys[currentPage].currentState!.saveAndValidate()) {
+                              if (_formKeys[currentPage]
+                                  .currentState!
+                                  .saveAndValidate()) {
                                 membersData[currentPage] =
-                                    MemberData.fromFormBuilderState(_formKeys[currentPage].currentState!);
+                                    MemberData.fromFormBuilderState(
+                                        _formKeys[currentPage].currentState!);
 
                                 if (currentPage < widget.memberCount - 1) {
                                   setState(() {

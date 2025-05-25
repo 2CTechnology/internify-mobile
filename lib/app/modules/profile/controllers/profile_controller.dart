@@ -285,33 +285,37 @@ class ProfileController extends ChangeNotifier {
   }
 
   Future<void> insertMyTeam(
-      String teamName, List<MemberData> membersData, String token) async {
+    String teamName,
+    List<MemberData> membersData,
+    String token,
+  ) async {
+    if (_isLoading) return; // prevent double submission
     _isLoading = true;
     notifyListeners();
 
-    List<Map<String, dynamic>> anggota = membersData.map((member) {
-      return {
-        'nim': member.nim,
-        'nama': member.fullname,
-        'id_prodi': member.prodiId,
-        'angkatan': member.angkatan,
-        'golongan': member.golongan,
-        'email': member.email,
-        'no_telp': member.phoneNumber,
-        'tanggal_lahir': member.dateOfBirth!.toIso8601String(),
-        'gender': member.gender,
-      };
-    }).toList();
-
-    String url = "$requestBaseUrl/create-kelompok";
-    final body = jsonEncode({
-      'nama_kelompok': teamName,
-      'anggota': anggota,
-    });
-
     try {
+      List<Map<String, dynamic>> anggota = membersData.map((member) {
+        return {
+          'nim': member.nim,
+          'nama': member.fullname,
+          'id_prodi': member.prodiId,
+          'angkatan': member.angkatan,
+          'golongan': member.golongan,
+          'email': member.email,
+          'no_telp': member.phoneNumber,
+          'tanggal_lahir': member.dateOfBirth?.toIso8601String(),
+          'gender': member.gender,
+        };
+      }).toList();
+
+      final url = Uri.parse("$requestBaseUrl/create-kelompok");
+      final body = jsonEncode({
+        'nama_kelompok': teamName,
+        'anggota': anggota,
+      });
+
       final response = await http.post(
-        Uri.parse(url),
+        url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -319,41 +323,30 @@ class ProfileController extends ChangeNotifier {
         body: body,
       );
 
-      if (response.statusCode == 200) {
-        final res = json.decode(response.body);
+      final res = json.decode(response.body);
+      print("📥 Response dari insertMyTeam: $res");
 
-        print(res);
-
-        //save id kelompok
-        final dbProvider = Get.find<DatabaseProvider>();
+      if (response.statusCode == 200 && res['response'] != null) {
         final idKelompok = res['response']['id'];
+        final dbProvider = Get.find<DatabaseProvider>();
         dbProvider.saveKelompokId(idKelompok);
-        print("id_kelompok tersimpan: $idKelompok");
+        print("✅ ID Kelompok berhasil disimpan: $idKelompok");
 
-        _isLoading = false;
         _message = "Successfully Created Team";
-
-        notifyListeners();
         Get.until((route) => Get.currentRoute == Routes.NAVIGATION_BAR);
       } else {
-        final res = json.decode(response.body);
-
-        print(res);
-
-        _isLoading = false;
-        _message = res["message"];
-
-        notifyListeners();
+        print("❌ insertMyTeam gagal: $res");
+        _message = res["message"] ?? "Unknown error occurred";
       }
-    } on SocketException catch (_) {
-      _isLoading = false;
+    } on SocketException {
       _message = "Internet connection is not available";
-    } catch (e) {
-      _isLoading = false;
+    } catch (e, stack) {
+      print("❌ Exception insertMyTeam: $e");
+      print(stack);
       _message = "Please try again";
+    } finally {
+      _isLoading = false;
       notifyListeners();
-
-      print(e);
     }
   }
 
