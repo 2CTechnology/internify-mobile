@@ -46,28 +46,28 @@ class TimelineView extends GetView<TimelineController> {
             final alurData =
                 controller.fetchAlurMagangController.alurMagangModel.value.data;
             if (alurData == null || alurData.dataAlurMagang == null) {
-                return Center(
+              return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                  Icon(
-                    Icons.info_outline,
-                    size: 50,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Alur magang belum tersedia,\nsilahkan isi data kelompok di profile",
-                    style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey,
+                    Icon(
+                      Icons.info_outline,
+                      size: 50,
+                      color: Colors.grey,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                    SizedBox(height: 10),
+                    Text(
+                      "Alur magang belum tersedia,\nsilahkan isi data kelompok di profile",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
-                );
+              );
             }
 
             return RefreshIndicator(
@@ -143,8 +143,15 @@ class TimelineView extends GetView<TimelineController> {
                       descriptionNull:
                           "Please complete the previous step first",
                       descriptionNotNull:
-                          "Please download the internship acceptance letter",
+                          "Please wait for the letter of assignment to be issued",
                       pageName: "surat-pelaksanaan",
+                      dataStatus: controller
+                          .fetchAlurMagangController
+                          .alurMagangModel
+                          .value
+                          .data
+                          .dataAlurMagang
+                          ?.statusSuratBalasan,
                     ),
                   ],
                 ),

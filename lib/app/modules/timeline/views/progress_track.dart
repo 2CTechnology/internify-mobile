@@ -232,7 +232,9 @@ class ProgressTrack extends StatelessWidget {
                 iconColor: (data != null && data != "")
                     ? const Color.fromARGB(255, 70, 116, 222)
                     : Colors.grey,
-                description: descriptionNull,
+                description: (dataStatus == "diterima")
+                    ? descriptionNotNull
+                    : descriptionNull,
               ),
             ]
           ],

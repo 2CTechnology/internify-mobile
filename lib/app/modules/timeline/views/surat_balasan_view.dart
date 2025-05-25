@@ -92,38 +92,24 @@ class SuratBalasan extends GetView<TimelineController> {
         } else if (fetchAlurMagangController.alurMagangModel.value.data
                 .dataAlurMagang?.statusSuratBalasan ==
             'diterima') {
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 17,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 17,
-                ),
-                const SizedBox(
-                  height: 80,
-                ),
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10),
+          return Center(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    CupertinoIcons.info_circle,
+                    color: Colors.green,
+                    size: 40,
                   ),
-                  child: const Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     "Tahap selanjutnya tinggal menunggu Surat Pelaksanaan Magang terbit dari admin",
                     style: TextStyle(
                       fontSize: 15,
@@ -132,8 +118,8 @@ class SuratBalasan extends GetView<TimelineController> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         } else if (fetchAlurMagangController.alurMagangModel.value.data
@@ -159,7 +145,7 @@ class SuratBalasan extends GetView<TimelineController> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Text(
-                    "Surat balasan telah diterima, silahkan apply ke perusahaan lain. /n Pencet button dibawah untuk melanjutkan",
+                    "Surat balasan telah diterima, silahkan apply ke perusahaan lain. \nPencet button dibawah untuk melanjutkan",
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.normal,

@@ -367,7 +367,7 @@ class RegisterView extends GetView<RegisterController> {
                                       ),
                                     )
                                   : Text(
-                                      "Sign In",
+                                      "Sign Up",
                                       style: GoogleFonts.poppins(
                                         textStyle: const TextStyle(
                                           fontSize: 20,
