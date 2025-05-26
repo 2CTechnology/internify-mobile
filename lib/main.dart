@@ -22,17 +22,17 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:simag_app/app/modules/notification/notif_service.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   //buat get
   Get.put(NavigationBarController());
   Get.put(DatabaseProvider());
-  WidgetsFlutterBinding.ensureInitialized();
 
-  // // firebase
+  //firebase
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   getToken();
 
-  // // Inisialisasi plugin local notification
+  //Inisialisasi plugin local notification
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/launcher_icon');
   final InitializationSettings initializationSettings =
@@ -111,6 +111,10 @@ void _showLocalNotification(RemoteMessage message) async {
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
+      playSound: true,
+      enableVibration: true,
+      enableLights: true,
+      visibility: NotificationVisibility.public,
     );
 
     const NotificationDetails platformDetails =
