@@ -189,3 +189,53 @@ class FetchAlurMagangController extends GetxController {
     isLoading.value = false;
   }
 }
+
+class FetchTempatMagangController extends GetxController {
+  var tempatMagangList = <String>[].obs;
+  var selectedTempatMagang = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchTempatMagang();
+  }
+
+  Future<void> fetchTempatMagang() async {
+    final url = Uri.parse('${AppUrl.baseUrl}/get-tempat-magang');
+
+    print("📦 Mulai Fetch Tempat Magang");
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    print("📦 Status: ${response.statusCode}");
+    print("📦 Body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+
+      tempatMagangList.assignAll(
+        (data['data'] as List)
+            .map((item) => item['nama_tempat'] as String)
+            .toSet() // Hapus duplikat
+            .toList(),
+      );
+      print("✅ Tempat Magang List: $tempatMagangList");
+      final alur = Get.find<FetchAlurMagangController>()
+          .alurMagangModel
+          .value
+          .data
+          .dataAlurMagang;
+      if (alur?.statusProposal == 'revisi' && alur?.tempatMagang != null) {
+        selectedTempatMagang.value = alur!.tempatMagang!;
+        print("✅ Default dropdown revisi: ${alur.tempatMagang!}");
+      }
+    } else {
+      print("❌ Failed to fetch tempat magang: ${response.statusCode}");
+    }
+  }
+}

@@ -18,15 +18,19 @@ class ApplyJobs extends GetView<TimelineController> {
       Get.put(FetchAlurMagangController());
   final FetchDosenController fetchDosenController =
       Get.put(FetchDosenController());
+  final FetchTempatMagangController fetchTempatMagangController =
+      Get.put(FetchTempatMagangController());
   final _companyNameController = TextEditingController();
   final _positionController = TextEditingController();
 
   void _submit() {
-    if (_companyNameController.text.isNotEmpty &&
-        _positionController.text.isNotEmpty &&
+    if (fetchTempatMagangController.selectedTempatMagang.value.isNotEmpty &&
         controller.selectedProposalFile.value != null) {
+      // postController.posisiMagang = _positionController.text;
       postController.tempatMagang = _companyNameController.text;
-      postController.posisiMagang = _positionController.text;
+      fetchTempatMagangController.selectedTempatMagang.value;
+      postController.tempatMagang =
+          fetchTempatMagangController.selectedTempatMagang.value;
       postController.filepath = controller.selectedProposalFile.value!.path;
       postController.postProposal();
       print("Form valid and submitted");
@@ -47,11 +51,13 @@ class ApplyJobs extends GetView<TimelineController> {
   }
 
   void _submitRevisi() {
-    if (_companyNameController.text.isNotEmpty &&
-        _positionController.text.isNotEmpty &&
+    if (fetchTempatMagangController.selectedTempatMagang.value.isNotEmpty &&
         controller.selectedProposalFile.value != null) {
+      // postController.posisiMagang = _positionController.text;
       postController.tempatMagang = _companyNameController.text;
-      postController.posisiMagang = _positionController.text;
+      fetchTempatMagangController.selectedTempatMagang.value;
+      postController.tempatMagang =
+          fetchTempatMagangController.selectedTempatMagang.value;
       postController.filepath = controller.selectedProposalFile.value!.path;
       postController.postProposal();
       print("Form valid and submitted");
@@ -80,14 +86,15 @@ class ApplyJobs extends GetView<TimelineController> {
         fetchAlurMagangController.alurMagangModel.value.data.dataAlurMagang;
 
     // Isi otomatis field jika belum diisi
-    if (_companyNameController.text.isEmpty && alur?.tempatMagang != null) {
-      _companyNameController.text = alur!.tempatMagang!;
-    }
+    // if (_companyNameController.text.isEmpty && alur?.tempatMagang != null) {
+    //   _companyNameController.text = alur!.tempatMagang!;
+    // }
 
-    if (_positionController.text.isEmpty && alur?.namaPosisi != null) {
-      _positionController.text = alur!.namaPosisi!;
-    }
-
+    // if (_positionController.text.isEmpty && alur?.namaPosisi != null) {
+    //   _positionController.text = alur!.namaPosisi!;
+    // }
+    print(
+        "DEBUG: Tempat Magang List: ${fetchTempatMagangController.tempatMagangList}");
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -132,20 +139,64 @@ class ApplyJobs extends GetView<TimelineController> {
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.white,
                       ),
-                      child: TextField(
-                        controller: TextEditingController(
-                          text: fetchAlurMagangController.alurMagangModel.value
-                                  .data.dataAlurMagang?.tempatMagang ??
-                              '',
-                        ),
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          // hintText: fetchAlurMagangController.alurMagangModel
-                          //     .value.data.dataAlurMagang?.tempatMagang,
-                          border: InputBorder.none,
-                        ),
-                        // enabled: false,
-                      ),
+                      // child: TextField(
+                      //   controller: TextEditingController(
+                      //     text: fetchAlurMagangController.alurMagangModel.value
+                      //             .data.dataAlurMagang?.tempatMagang ??
+                      //         '',
+                      //   ),
+                      //   readOnly: true,
+                      //   decoration: InputDecoration(
+                      //     // hintText: fetchAlurMagangController.alurMagangModel
+                      //     //     .value.data.dataAlurMagang?.tempatMagang,
+                      //     border: InputBorder.none,
+                      //   ),
+                      //   // enabled: false,
+                      // ),
+                      child: Obx(() {
+                        String? status = fetchAlurMagangController
+                            .alurMagangModel
+                            .value
+                            .data
+                            .dataAlurMagang
+                            ?.statusProposal;
+
+                        return DropdownButtonFormField<String>(
+                          value: fetchTempatMagangController
+                                  .selectedTempatMagang.value.isEmpty
+                              ? fetchAlurMagangController.alurMagangModel.value
+                                  .data.dataAlurMagang?.tempatMagang
+                              : fetchTempatMagangController
+                                  .selectedTempatMagang.value,
+                          items: fetchTempatMagangController.tempatMagangList
+                              .toSet()
+                              .toList()
+                              .map((tempat) => DropdownMenuItem(
+                                    value: tempat,
+                                    child: Text(tempat),
+                                  ))
+                              .toList(),
+                          onChanged: (status == null ||
+                                  status == 'revisi' ||
+                                  status == 'belum ada' ||
+                                  status == 'ditolak')
+                              ? (value) {
+                                  fetchTempatMagangController
+                                      .selectedTempatMagang.value = value!;
+                                }
+                              : null,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          hint: const Text("Select Company"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please select company";
+                            }
+                            return null;
+                          },
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -217,16 +268,60 @@ class ApplyJobs extends GetView<TimelineController> {
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.white,
                       ),
-                      child: TextField(
-                        controller: _companyNameController,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          // hintText: fetchAlurMagangController.alurMagangModel
-                          //     .value.data.dataAlurMagang?.tempatMagang,
-                          border: InputBorder.none,
-                        ),
-                        // enabled: false,
-                      ),
+                      // child: TextField(
+                      //   controller: _companyNameController,
+                      //   readOnly: true,
+                      //   decoration: InputDecoration(
+                      //     // hintText: fetchAlurMagangController.alurMagangModel
+                      //     //     .value.data.dataAlurMagang?.tempatMagang,
+                      //     border: InputBorder.none,
+                      //   ),
+                      //   // enabled: false,
+                      // ),
+                      child: Obx(() {
+                        String? status = fetchAlurMagangController
+                            .alurMagangModel
+                            .value
+                            .data
+                            .dataAlurMagang
+                            ?.statusProposal;
+
+                        return DropdownButtonFormField<String>(
+                          value: fetchTempatMagangController
+                                  .selectedTempatMagang.value.isEmpty
+                              ? fetchAlurMagangController.alurMagangModel.value
+                                  .data.dataAlurMagang?.tempatMagang
+                              : fetchTempatMagangController
+                                  .selectedTempatMagang.value,
+                          items: fetchTempatMagangController.tempatMagangList
+                              .toSet()
+                              .toList()
+                              .map((tempat) => DropdownMenuItem(
+                                    value: tempat,
+                                    child: Text(tempat),
+                                  ))
+                              .toList(),
+                          onChanged: (status == null ||
+                                  status == 'revisi' ||
+                                  status == 'belum ada' ||
+                                  status == 'ditolak')
+                              ? (value) {
+                                  fetchTempatMagangController
+                                      .selectedTempatMagang.value = value!;
+                                }
+                              : null,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          hint: const Text("Select Company"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please select company";
+                            }
+                            return null;
+                          },
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -372,15 +467,59 @@ class ApplyJobs extends GetView<TimelineController> {
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.white,
                       ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: fetchAlurMagangController.alurMagangModel
-                              .value.data.dataAlurMagang?.tempatMagang,
-                          border: InputBorder.none,
-                        ),
-                        readOnly: true,
-                        // enabled: false,
-                      ),
+                      // child: TextField(
+                      //   decoration: InputDecoration(
+                      //     hintText: fetchAlurMagangController.alurMagangModel
+                      //         .value.data.dataAlurMagang?.tempatMagang,
+                      //     border: InputBorder.none,
+                      //   ),
+                      //   readOnly: true,
+                      //   // enabled: false,
+                      // ),
+                      child: Obx(() {
+                        String? status = fetchAlurMagangController
+                            .alurMagangModel
+                            .value
+                            .data
+                            .dataAlurMagang
+                            ?.statusProposal;
+
+                        return DropdownButtonFormField<String>(
+                          value: fetchTempatMagangController
+                                  .selectedTempatMagang.value.isEmpty
+                              ? fetchAlurMagangController.alurMagangModel.value
+                                  .data.dataAlurMagang?.tempatMagang
+                              : fetchTempatMagangController
+                                  .selectedTempatMagang.value,
+                          items: fetchTempatMagangController.tempatMagangList
+                              .toSet()
+                              .toList()
+                              .map((tempat) => DropdownMenuItem(
+                                    value: tempat,
+                                    child: Text(tempat),
+                                  ))
+                              .toList(),
+                          onChanged: (status == null ||
+                                  status == 'revisi' ||
+                                  status == 'belum ada' ||
+                                  status == 'ditolak')
+                              ? (value) {
+                                  fetchTempatMagangController
+                                      .selectedTempatMagang.value = value!;
+                                }
+                              : null,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          hint: const Text("Select Company"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please select company";
+                            }
+                            return null;
+                          },
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -464,19 +603,63 @@ class ApplyJobs extends GetView<TimelineController> {
                           borderRadius: BorderRadius.circular(10),
                           color: Colors.white,
                         ),
-                        child: TextFormField(
-                          controller: _companyNameController,
-                          decoration: const InputDecoration(
-                            hintText: "Enter Company's Name",
-                            border: InputBorder.none,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter company's name";
-                            }
-                            return null;
-                          },
-                        ),
+                        // child: TextFormField(
+                        //   controller: _companyNameController,
+                        //   decoration: const InputDecoration(
+                        //     hintText: "Enter Company's Name",
+                        //     border: InputBorder.none,
+                        //   ),
+                        //   validator: (value) {
+                        //     if (value == null || value.isEmpty) {
+                        //       return "Please enter company's name";
+                        //     }
+                        //     return null;
+                        //   },
+                        // ),
+                        child: Obx(() {
+                          String? status = fetchAlurMagangController
+                              .alurMagangModel
+                              .value
+                              .data
+                              .dataAlurMagang
+                              ?.statusProposal;
+
+                          return DropdownButtonFormField<String>(
+                            value: fetchTempatMagangController
+                                    .selectedTempatMagang.value.isEmpty
+                                ? fetchAlurMagangController.alurMagangModel
+                                    .value.data.dataAlurMagang?.tempatMagang
+                                : fetchTempatMagangController
+                                    .selectedTempatMagang.value,
+                            items: fetchTempatMagangController.tempatMagangList
+                                .toSet()
+                                .toList()
+                                .map((tempat) => DropdownMenuItem(
+                                      value: tempat,
+                                      child: Text(tempat),
+                                    ))
+                                .toList(),
+                            onChanged: (status == null ||
+                                    status == 'revisi' ||
+                                    status == 'belum ada' ||
+                                    status == 'ditolak')
+                                ? (value) {
+                                    fetchTempatMagangController
+                                        .selectedTempatMagang.value = value!;
+                                  }
+                                : null,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                            hint: const Text("Select Company"),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please select company";
+                              }
+                              return null;
+                            },
+                          );
+                        }),
                       ),
                     ],
                   ),
