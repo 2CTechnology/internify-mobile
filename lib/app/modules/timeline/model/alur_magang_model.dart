@@ -99,8 +99,7 @@ class DataAlurMagang {
         tempatMagang: json["tempat_magang"],
         namaPosisi: json["nama_posisi"],
         suratBalasan: json["surat_balasan"],
-        // ganti
-        suratPelaksanaan: json["surat_pengantar"],
+        suratPelaksanaan: json["surat_pelaksanaan"],
         statusSuratBalasan: json["status_surat_balasan"],
         createdAt: DateTime.tryParse(json["created_at"] ?? '') ?? DateTime.now(),
         updatedAt: DateTime.tryParse(json["updated_at"] ?? '') ?? DateTime.now(),
@@ -118,7 +117,7 @@ class DataAlurMagang {
         "nama_posisi": namaPosisi,
         "surat_balasan": suratBalasan,
         // ganti
-        "surat_pengantar": suratPelaksanaan,
+        "surat_pelaksanaan": suratPelaksanaan,
         "status_surat_balasan": statusSuratBalasan,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
