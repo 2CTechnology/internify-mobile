@@ -21,19 +21,19 @@ class ApplyJobs extends GetView<TimelineController> {
   final FetchTempatMagangController fetchTempatMagangController =
       Get.put(FetchTempatMagangController());
   final _companyNameController = TextEditingController();
-  final _positionController = TextEditingController();
+  // final _positionController = TextEditingController();
 
   void _submit() {
-    if (fetchTempatMagangController.selectedTempatMagang.value.isNotEmpty &&
+    if (fetchTempatMagangController.selectedTempatMagangId.value.isNotEmpty &&
         controller.selectedProposalFile.value != null) {
-      // postController.posisiMagang = _positionController.text;
-      postController.tempatMagang = _companyNameController.text;
-      fetchTempatMagangController.selectedTempatMagang.value;
-      postController.tempatMagang =
-          fetchTempatMagangController.selectedTempatMagang.value;
+      // Kirim id tempat magang ke PostJobsController
+      postController.tempatMagangId =
+          fetchTempatMagangController.selectedTempatMagangId.value;
       postController.filepath = controller.selectedProposalFile.value!.path;
+
+      // Submit proposal
       postController.postProposal();
-      print("Form valid and submitted");
+      print("✅ Form valid and submitted");
     } else {
       Get.snackbar(
         "Error",
@@ -51,15 +51,16 @@ class ApplyJobs extends GetView<TimelineController> {
   }
 
   void _submitRevisi() {
-    if (fetchTempatMagangController.selectedTempatMagang.value.isNotEmpty &&
+    if (fetchTempatMagangController.selectedTempatMagangId.value.isNotEmpty &&
         controller.selectedProposalFile.value != null) {
-      // postController.posisiMagang = _positionController.text;
-      postController.tempatMagang = _companyNameController.text;
-      fetchTempatMagangController.selectedTempatMagang.value;
-      postController.tempatMagang =
-          fetchTempatMagangController.selectedTempatMagang.value;
+      // Assign data ke postController
+      postController.tempatMagangId =
+          fetchTempatMagangController.selectedTempatMagangId.value;
       postController.filepath = controller.selectedProposalFile.value!.path;
+
+      // Panggil fungsi submit ke backend
       postController.postProposal();
+
       print("Form valid and submitted");
     } else {
       if (controller.selectedProposalFile.value == null) {
@@ -163,26 +164,24 @@ class ApplyJobs extends GetView<TimelineController> {
 
                         return DropdownButtonFormField<String>(
                           value: fetchTempatMagangController
-                                  .selectedTempatMagang.value.isEmpty
-                              ? fetchAlurMagangController.alurMagangModel.value
-                                  .data.dataAlurMagang?.tempatMagang
+                                  .selectedTempatMagangId.value.isEmpty
+                              ? null
                               : fetchTempatMagangController
-                                  .selectedTempatMagang.value,
+                                  .selectedTempatMagangId.value,
                           items: fetchTempatMagangController.tempatMagangList
-                              .toSet()
-                              .toList()
-                              .map((tempat) => DropdownMenuItem(
-                                    value: tempat,
-                                    child: Text(tempat),
+                              .map((tempat) => DropdownMenuItem<String>(
+                                    value: tempat['id']
+                                        .toString(), // fix tipe jadi String
+                                    child: Text(tempat['nama']),
                                   ))
                               .toList(),
                           onChanged: (status == null ||
-                                  status == 'revisi' ||
+                                  status == '' ||
                                   status == 'belum ada' ||
                                   status == 'ditolak')
                               ? (value) {
                                   fetchTempatMagangController
-                                      .selectedTempatMagang.value = value!;
+                                      .selectedTempatMagangId.value = value!;
                                 }
                               : null,
                           decoration: const InputDecoration(
@@ -203,40 +202,40 @@ class ApplyJobs extends GetView<TimelineController> {
                 const SizedBox(
                   height: 17,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Internship Position",
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: TextField(
-                        controller: TextEditingController(
-                          text: fetchAlurMagangController.alurMagangModel.value
-                                  .data.dataAlurMagang?.namaPosisi ??
-                              '',
-                        ),
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          // hintText: fetchAlurMagangController.alurMagangModel
-                          //     .value.data.dataAlurMagang?.namaPosisi,
-                          border: InputBorder.none,
-                        ),
-                        // enabled: false,
-                      ),
-                    ),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     const Text(
+                //       "Internship Position",
+                //       style:
+                //           TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                //     ),
+                //     const SizedBox(
+                //       height: 10,
+                //     ),
+                //     Container(
+                //       padding: const EdgeInsets.symmetric(horizontal: 15),
+                //       decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(10),
+                //         color: Colors.white,
+                //       ),
+                //       child: TextField(
+                //         controller: TextEditingController(
+                //           text: fetchAlurMagangController.alurMagangModel.value
+                //                   .data.dataAlurMagang?.namaPosisi ??
+                //               '',
+                //         ),
+                //         readOnly: true,
+                //         decoration: InputDecoration(
+                //           // hintText: fetchAlurMagangController.alurMagangModel
+                //           //     .value.data.dataAlurMagang?.namaPosisi,
+                //           border: InputBorder.none,
+                //         ),
+                //         // enabled: false,
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           );
@@ -288,26 +287,24 @@ class ApplyJobs extends GetView<TimelineController> {
 
                         return DropdownButtonFormField<String>(
                           value: fetchTempatMagangController
-                                  .selectedTempatMagang.value.isEmpty
-                              ? fetchAlurMagangController.alurMagangModel.value
-                                  .data.dataAlurMagang?.tempatMagang
+                                  .selectedTempatMagangId.value.isEmpty
+                              ? null
                               : fetchTempatMagangController
-                                  .selectedTempatMagang.value,
+                                  .selectedTempatMagangId.value,
                           items: fetchTempatMagangController.tempatMagangList
-                              .toSet()
-                              .toList()
-                              .map((tempat) => DropdownMenuItem(
-                                    value: tempat,
-                                    child: Text(tempat),
+                              .map((tempat) => DropdownMenuItem<String>(
+                                    value: tempat['id']
+                                        .toString(), // fix tipe jadi String
+                                    child: Text(tempat['nama']),
                                   ))
                               .toList(),
                           onChanged: (status == null ||
-                                  status == 'revisi' ||
+                                  status == '' ||
                                   status == 'belum ada' ||
                                   status == 'ditolak')
                               ? (value) {
                                   fetchTempatMagangController
-                                      .selectedTempatMagang.value = value!;
+                                      .selectedTempatMagangId.value = value!;
                                 }
                               : null,
                           decoration: const InputDecoration(
@@ -328,36 +325,36 @@ class ApplyJobs extends GetView<TimelineController> {
                 const SizedBox(
                   height: 17,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Internship Position",
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: TextField(
-                        controller: _positionController,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          // hintText: fetchAlurMagangController.alurMagangModel
-                          //     .value.data.dataAlurMagang?.namaPosisi,
-                          border: InputBorder.none,
-                        ),
-                        // enabled: false,
-                      ),
-                    ),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     const Text(
+                //       "Internship Position",
+                //       style:
+                //           TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                //     ),
+                //     const SizedBox(
+                //       height: 10,
+                //     ),
+                //     Container(
+                //       padding: const EdgeInsets.symmetric(horizontal: 15),
+                //       decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(10),
+                //         color: Colors.white,
+                //       ),
+                //       child: TextField(
+                //         controller: _positionController,
+                //         readOnly: true,
+                //         decoration: InputDecoration(
+                //           // hintText: fetchAlurMagangController.alurMagangModel
+                //           //     .value.data.dataAlurMagang?.namaPosisi,
+                //           border: InputBorder.none,
+                //         ),
+                //         // enabled: false,
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 SizedBox(
                   height: 17,
                 ),
@@ -486,26 +483,24 @@ class ApplyJobs extends GetView<TimelineController> {
 
                         return DropdownButtonFormField<String>(
                           value: fetchTempatMagangController
-                                  .selectedTempatMagang.value.isEmpty
-                              ? fetchAlurMagangController.alurMagangModel.value
-                                  .data.dataAlurMagang?.tempatMagang
+                                  .selectedTempatMagangId.value.isEmpty
+                              ? null
                               : fetchTempatMagangController
-                                  .selectedTempatMagang.value,
+                                  .selectedTempatMagangId.value,
                           items: fetchTempatMagangController.tempatMagangList
-                              .toSet()
-                              .toList()
-                              .map((tempat) => DropdownMenuItem(
-                                    value: tempat,
-                                    child: Text(tempat),
+                              .map((tempat) => DropdownMenuItem<String>(
+                                    value: tempat['id']
+                                        .toString(), // fix tipe jadi String
+                                    child: Text(tempat['nama']),
                                   ))
                               .toList(),
                           onChanged: (status == null ||
-                                  status == 'revisi' ||
+                                  status == '' ||
                                   status == 'belum ada' ||
                                   status == 'ditolak')
                               ? (value) {
                                   fetchTempatMagangController
-                                      .selectedTempatMagang.value = value!;
+                                      .selectedTempatMagangId.value = value!;
                                 }
                               : null,
                           decoration: const InputDecoration(
@@ -526,35 +521,35 @@ class ApplyJobs extends GetView<TimelineController> {
                 const SizedBox(
                   height: 17,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Internship Position",
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: fetchAlurMagangController.alurMagangModel
-                              .value.data.dataAlurMagang?.namaPosisi,
-                          border: InputBorder.none,
-                        ),
-                        readOnly: true,
-                        // enabled: false,
-                      ),
-                    ),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     const Text(
+                //       "Internship Position",
+                //       style:
+                //           TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                //     ),
+                //     const SizedBox(
+                //       height: 10,
+                //     ),
+                //     Container(
+                //       padding: const EdgeInsets.symmetric(horizontal: 15),
+                //       decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(10),
+                //         color: Colors.white,
+                //       ),
+                //       child: TextField(
+                //         decoration: InputDecoration(
+                //           hintText: fetchAlurMagangController.alurMagangModel
+                //               .value.data.dataAlurMagang?.namaPosisi,
+                //           border: InputBorder.none,
+                //         ),
+                //         readOnly: true,
+                //         // enabled: false,
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 const SizedBox(
                   height: 80,
                 ),
@@ -626,26 +621,24 @@ class ApplyJobs extends GetView<TimelineController> {
 
                           return DropdownButtonFormField<String>(
                             value: fetchTempatMagangController
-                                    .selectedTempatMagang.value.isEmpty
-                                ? fetchAlurMagangController.alurMagangModel
-                                    .value.data.dataAlurMagang?.tempatMagang
+                                    .selectedTempatMagangId.value.isEmpty
+                                ? null
                                 : fetchTempatMagangController
-                                    .selectedTempatMagang.value,
+                                    .selectedTempatMagangId.value,
                             items: fetchTempatMagangController.tempatMagangList
-                                .toSet()
-                                .toList()
-                                .map((tempat) => DropdownMenuItem(
-                                      value: tempat,
-                                      child: Text(tempat),
+                                .map((tempat) => DropdownMenuItem<String>(
+                                      value: tempat['id']
+                                          .toString(), // fix tipe jadi String
+                                      child: Text(tempat['nama']),
                                     ))
                                 .toList(),
                             onChanged: (status == null ||
-                                    status == 'revisi' ||
+                                    status == '' ||
                                     status == 'belum ada' ||
                                     status == 'ditolak')
                                 ? (value) {
                                     fetchTempatMagangController
-                                        .selectedTempatMagang.value = value!;
+                                        .selectedTempatMagangId.value = value!;
                                   }
                                 : null,
                             decoration: const InputDecoration(
@@ -669,39 +662,39 @@ class ApplyJobs extends GetView<TimelineController> {
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Internship Position",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
-                        ),
-                        child: TextFormField(
-                          controller: _positionController,
-                          decoration: const InputDecoration(
-                            hintText: "Enter Position",
-                            border: InputBorder.none,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter internship position";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                  // child: Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     const Text(
+                  //       "Internship Position",
+                  //       style: TextStyle(
+                  //           fontSize: 15, fontWeight: FontWeight.bold),
+                  //     ),
+                  //     const SizedBox(
+                  //       height: 10,
+                  //     ),
+                  //     Container(
+                  //       padding: const EdgeInsets.symmetric(horizontal: 15),
+                  //       decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(10),
+                  //         color: Colors.white,
+                  //       ),
+                  //       child: TextFormField(
+                  //         controller: _positionController,
+                  //         decoration: const InputDecoration(
+                  //           hintText: "Enter Position",
+                  //           border: InputBorder.none,
+                  //         ),
+                  //         validator: (value) {
+                  //           if (value == null || value.isEmpty) {
+                  //             return "Please enter internship position";
+                  //           }
+                  //           return null;
+                  //         },
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 15),

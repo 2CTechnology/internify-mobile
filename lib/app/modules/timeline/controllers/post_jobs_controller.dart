@@ -11,6 +11,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 class PostJobsController extends GetxController {
+  var tempatMagangId = '';
   var tempatMagang = '';
   var posisiMagang = '';
   var filepath = "";
@@ -51,6 +52,7 @@ class PostJobsController extends GetxController {
           Uri.parse('$requestBaseUrl/upload-proposal/$idKelompok');
       var requestProposal = http.MultipartRequest('POST', urlProposal);
       requestProposal.fields['id'] = idKelompok.toString();
+      requestProposal.fields['tempat_magang_id'] = tempatMagangId;
       requestProposal.files
           .add(await http.MultipartFile.fromPath('proposal', filepath));
       requestProposal.headers['Authorization'] = 'Bearer $token';
@@ -105,17 +107,19 @@ class PostJobsController extends GetxController {
 
     try {
       //post letter
-      final urlLetter = Uri.parse('$requestBaseUrl/upload-surat-balasan/$idKelompok');
+      final urlLetter =
+          Uri.parse('$requestBaseUrl/upload-surat-balasan/$idKelompok');
       final requestLetter = http.MultipartRequest('POST', urlLetter);
       // requestLetter.fields['id'] = idKelompok.toString();
 
-      requestLetter.files.add(await http.MultipartFile.fromPath(
+      requestLetter.files.add(
+        await http.MultipartFile.fromPath(
           'surat_balasan',
           filepath,
           contentType: MediaType(mimeSplit[0], mimeSplit[1]),
         ),
       );
-      
+
       requestLetter.headers['Authorization'] = 'Bearer $token';
       requestLetter.headers['Accept'] = 'application/json';
 

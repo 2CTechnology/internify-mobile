@@ -191,8 +191,8 @@ class FetchAlurMagangController extends GetxController {
 }
 
 class FetchTempatMagangController extends GetxController {
-  var tempatMagangList = <String>[].obs;
-  var selectedTempatMagang = ''.obs;
+  var tempatMagangList = <Map<String, dynamic>>[].obs;
+  var selectedTempatMagangId = ''.obs;
 
   @override
   void onInit() {
@@ -201,7 +201,7 @@ class FetchTempatMagangController extends GetxController {
   }
 
   Future<void> fetchTempatMagang() async {
-    final url = Uri.parse('${AppUrl.baseUrl}/get-tempat-magang');
+    final url = Uri.parse('${AppUrl.baseUrl}/get-tempat-available');
 
     print("📦 Mulai Fetch Tempat Magang");
 
@@ -218,21 +218,25 @@ class FetchTempatMagangController extends GetxController {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
+      // Map data: simpan id & nama tempat
       tempatMagangList.assignAll(
         (data['data'] as List)
-            .map((item) => item['nama_tempat'] as String)
-            .toSet() // Hapus duplikat
+            .map((item) => {
+                  "id": item['id'].toString(),
+                  "nama": item['nama_tempat'],
+                })
             .toList(),
       );
       print("✅ Tempat Magang List: $tempatMagangList");
+
       final alur = Get.find<FetchAlurMagangController>()
           .alurMagangModel
           .value
           .data
           .dataAlurMagang;
-      if (alur?.statusProposal == 'revisi' && alur?.tempatMagang != null) {
-        selectedTempatMagang.value = alur!.tempatMagang!;
-        print("✅ Default dropdown revisi: ${alur.tempatMagang!}");
+      if (alur?.statusProposal == 'revisi' && alur?.idTempatMagang != null) {
+        selectedTempatMagangId.value = alur!.idTempatMagang!.toString();
+        print("✅ Default dropdown revisi (id): ${alur.idTempatMagang!}");
       }
     } else {
       print("❌ Failed to fetch tempat magang: ${response.statusCode}");
