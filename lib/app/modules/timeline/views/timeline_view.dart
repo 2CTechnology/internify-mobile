@@ -143,7 +143,7 @@ class TimelineView extends GetView<TimelineController> {
                       descriptionNull:
                           "Please complete the previous step first",
                       descriptionNotNull:
-                          "Please wait for the letter of assignment to be issued",
+                          "",
                       pageName: "surat-pelaksanaan",
                       dataStatus: controller
                           .fetchAlurMagangController
@@ -151,7 +151,7 @@ class TimelineView extends GetView<TimelineController> {
                           .value
                           .data
                           .dataAlurMagang
-                          ?.statusSuratBalasan,
+                          ?.suratPelaksanaan,
                     ),
                   ],
                 ),

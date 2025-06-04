@@ -125,9 +125,12 @@ class ProgressTrack extends StatelessWidget {
             return;
           }
 
-          if ((pageName == "surat-pelaksanaan") && statusSuratBalasan != "diterima") {
+          if ((pageName == "surat-pelaksanaan") &&
+              statusSuratBalasan != "diterima") {
             showSingleSnackbar(
-                "Error", "Reply letter must be accepted first before proceeds", Colors.red);
+                "Error",
+                "Reply letter must be accepted first before proceeds",
+                Colors.red);
             return;
           }
 
@@ -217,7 +220,7 @@ class ProgressTrack extends StatelessWidget {
                   title: title,
                   iconColor: const Color.fromARGB(255, 70, 116, 222),
                   description:
-                      "Congratulations, your reply letter has been accepted. Please wait for the Assignment Letter to be issued.",
+                      "Congratulations, your reply letter has been accepted.",
                 )
               else
                 buildProgressState(
@@ -225,18 +228,31 @@ class ProgressTrack extends StatelessWidget {
                   iconColor: Colors.grey,
                   description: descriptionNull,
                 ),
+            ],
 
-            ] else if (pageName == "surat-pelaksanaan") ...[
-              buildProgressState(
-                title: title,
-                iconColor: (data != null && data != "")
-                    ? const Color.fromARGB(255, 70, 116, 222)
-                    : Colors.grey,
-                description: (dataStatus == "diterima")
-                    ? descriptionNotNull
-                    : descriptionNull,
-              ),
-            ]
+            if (pageName == "surat-pelaksanaan") ...[
+              if (controller.fetchAlurMagangController.alurMagangModel.value
+                      .data.dataAlurMagang?.statusSuratBalasan !=
+                  "diterima")
+                buildProgressState(
+                  title: title,
+                  iconColor: Colors.grey,
+                  description: descriptionNull,
+                )
+              else if (data == null)
+                buildProgressState(
+                  title: title,
+                  iconColor: Colors.grey,
+                  description:
+                      "Please wait for the letter of assignment to be issued",
+                )
+              else
+                buildProgressState(
+                  title: title,
+                  iconColor: const Color.fromARGB(255, 70, 116, 222),
+                  description: "Letter of Assignment has been issued",
+                ),
+            ],
           ],
         ),
       ),
