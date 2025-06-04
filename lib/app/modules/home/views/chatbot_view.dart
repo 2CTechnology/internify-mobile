@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class ChatbotView extends StatefulWidget {
   const ChatbotView({super.key});
@@ -10,19 +13,47 @@ class ChatbotView extends StatefulWidget {
 }
 
 class _ChatbotViewState extends State<ChatbotView> {
-  final List<Map<String, String>> messages = [];
   final TextEditingController _controller = TextEditingController();
+  List<Map<String, String>> messages = [];
 
-  void _sendMessage() {
-    if (_controller.text.trim().isEmpty) return;
+  Future<void> kirimPertanyaan () async {
+    final pertanyaan = _controller.text.trim();
+    if (pertanyaan.isEmpty) return;
 
     setState(() {
-      messages.add({'sender': 'user', 'text': _controller.text.trim()});
-      messages
-          .add({'sender': 'bot', 'text': 'This is a response from the bot.'});
+      messages.add({'sender': 'user', 'text': pertanyaan});
+      _controller.clear();
     });
 
-    _controller.clear();
+    try {
+      final url = Uri.parse('http://167.71.192.145:5000/chat');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({"pertanyaan": pertanyaan}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          messages.add({'sender': 'bot', 'text': data['jawaban']});
+        });
+      } else {
+        setState(() {
+          messages.add({
+            'sender': 'bot',
+            'text': "Terjadi kesalahan saat mengirim pertanyaan."
+          });
+        });
+      }
+    } catch (e) {
+      setState(() {
+        messages.add({
+          'sender': 'bot',
+          'text': "Tidak dapat terhubung ke server chatbot."
+        });
+      });
+    }
   }
 
   @override
@@ -56,7 +87,9 @@ class _ChatbotViewState extends State<ChatbotView> {
                 final isUser = message['sender'] == 'user';
                 return Align(
                   alignment:
-                      isUser ? Alignment.centerRight : Alignment.centerLeft,
+                      isUser 
+                      ? Alignment.centerRight 
+                      : Alignment.centerLeft,
                   child: Container(
                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     padding: EdgeInsets.all(10),
@@ -74,6 +107,7 @@ class _ChatbotViewState extends State<ChatbotView> {
               },
             ),
           ),
+          Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -82,15 +116,16 @@ class _ChatbotViewState extends State<ChatbotView> {
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText: 'Type your message...',
+                      hintText: 'Tulis pertanyaan...',
                       border: OutlineInputBorder(),
                     ),
+                    onSubmitted: (_) => kirimPertanyaan(),
                   ),
                 ),
                 SizedBox(width: 8),
                 IconButton(
                   icon: Icon(Icons.send),
-                  onPressed: _sendMessage,
+                  onPressed: kirimPertanyaan,
                 ),
               ],
             ),
