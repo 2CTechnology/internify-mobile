@@ -26,7 +26,7 @@ class _ChatbotViewState extends State<ChatbotView> {
     });
 
     try {
-      final url = Uri.parse('http://167.71.192.145:5000/chatbot');
+      final url = Uri.parse('http://167.71.192.145/chatbot');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
